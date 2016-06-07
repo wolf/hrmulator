@@ -41,6 +41,8 @@ class Computer:
             raise MemoryTileIsEmptyError()
 
 class CPUInstruction:
+    has_argument = False
+
     def __str__( self ):
         return self.token
 
@@ -72,6 +74,8 @@ class MoveToOutbox( CPUInstruction ):
 
 
 class AbstractTileCommand( CPUInstruction ):
+    has_argument = True
+
     def __str__( self ):
         return "{} [{}]".format(self.token, self.tile_index)
 
@@ -117,6 +121,7 @@ class Subtract( AbstractTileCommand ):
 
 class Jump( CPUInstruction ):
     token = "jump_to"
+    has_argument = True
 
     def __str__( self ):
         return "{} {:03d}".format(self.token, self.destination_pc)
@@ -176,6 +181,20 @@ class BumpDown( AbstractTileCommand ):
         computer.program_counter += 1
 
 
+InstructionCatalog = [
+    NoOp,
+    MoveFromInbox,
+    MoveToOutbox,
+    CopyTo,
+    CopyFrom,
+    Add,
+    Subtract,
+    Jump,
+    JumpIfZero,
+    JumpIfNegative,
+    BumpUp,
+    BumpDown
+]
 
 def main():
     computer = Computer()
@@ -197,6 +216,9 @@ def main():
     computer.run_program()
 
     print(computer.outbox)
+
+    for instruction in InstructionCatalog:
+        print("{} {}".format(instruction.token, "arg" if instruction.has_argument else ''))
 
 if __name__ == '__main__':
     main()
