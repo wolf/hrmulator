@@ -16,6 +16,16 @@ class Computer:
         self.memory = {}
         self.break_points = {}
 
+    def load_program( self, path ):
+        asm = Assembler()
+        self.program = asm.load_program(path)
+        self.break_points = {}
+
+    def dump_program( self, path ):
+        with open(path, 'w+') as outfile:
+            for instruction in self.program:
+                outfile.write("{}\n".format(instruction))
+
     def run_program( self ):
         self.program_counter = 0
         try:
@@ -211,7 +221,7 @@ class Assembler:
         self.symbolCatalog = {klass.token: klass for klass in self.InstructionCatalog}
 
     def load_program( self, path ):
-        statement_re = re.compile('([a-zA-Z_]+)(?:[\s\t]+\[?([0-9]+)\]?)?(?:[\s\t]+#.*)?\n')
+        statement_re = re.compile('[\s\t]*([a-zA-Z_]+)(?:[\s\t]+\[?([0-9]+)\]?)?(?:[\s\t]+#.*)?[\s\t]*\n')
         program = []
         with open(path, 'r') as infile:
             for line in infile:
@@ -230,10 +240,8 @@ def main():
     computer = Computer()
     computer.inbox = [1, -2, 3, -4, 5, -6]
 
-    asm = Assembler()
-    computer.program = asm.load_program('programs/Absolute_Positivity.hrm')
-
     print()
+    computer.load_program('programs/Absolute_Positivity.hrm')
     computer.break_points[3] = True
     computer.program_counter = 5
     computer.print_program()
