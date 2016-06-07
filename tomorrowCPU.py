@@ -26,7 +26,7 @@ class Computer:
 
     def print_program( self ):
         for i, instruction in enumerate(self.program):
-            print("{:03d}: {}".format(i, str(instruction)))
+            print("{}{:03d}: {}".format('*' if i==self.program_counter else ' ', i, str(instruction)))
 
     def assertInboxIsNotEmpty( self ):
         if not len(self.inbox):
