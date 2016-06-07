@@ -43,6 +43,7 @@ class Computer:
         if self.memory.get(tile_index, None) is None:
             raise MemoryTileIsEmptyError()
 
+
 class CPUInstruction:
     has_argument = False
 
@@ -205,7 +206,7 @@ class Assembler:
         self.symbolCatalog = {klass.token: klass for klass in self.InstructionCatalog}
 
     def load_program( self, path ):
-        statement_re = re.compile('([a-zA-Z_]+)(?:[\s\t]+\[?([0-9]+)\]?)?\n')
+        statement_re = re.compile('([a-zA-Z_]+)(?:[\s\t]+\[?([0-9]+)\]?)?(?:[\s\t]+#.*)?\n')
         program = []
         with open(path, 'r') as infile:
             for line in infile:
