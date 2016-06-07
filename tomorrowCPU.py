@@ -176,9 +176,14 @@ class BumpDown( CPUInstruction ):
 
 def main():
     computer = Computer()
-    computer.inbox = [1, 2, 3, 4, 5, 6]
+    computer.inbox = [1, -2, 3, -4, 5, -6]
     computer.program = [
         MoveFromInbox(),
+        JumpIfNegative(3),
+        Jump(6),
+        CopyTo(0),
+        SubtractFrom(0),
+        SubtractFrom(0),
         MoveToOutbox(),
         Jump(0)
     ]
