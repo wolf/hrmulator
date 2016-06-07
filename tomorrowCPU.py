@@ -32,11 +32,14 @@ class Computer:
         if self.memory.get(tile_index, None) is None:
             raise MemoryTileIsEmptyError()
 
-class CPUInstruction: pass
+class CPUInstruction:
+    def __str__( self ):
+        return self.token()
 
 
 class NoOp( CPUInstruction ):
-    def __str__( self ):
+    @classmethod
+    def token( klass ):
         return "no_op"
 
     def execute( self, computer ):
@@ -44,7 +47,8 @@ class NoOp( CPUInstruction ):
 
 
 class MoveFromInbox( CPUInstruction ):
-    def __str__( self ):
+    @classmethod
+    def token( klass ):
         return "move_from_inbox"
 
     def execute( self, computer ):
@@ -54,7 +58,8 @@ class MoveFromInbox( CPUInstruction ):
 
 
 class MoveToOutbox( CPUInstruction ):
-    def __str__( self ):
+    @classmethod
+    def token( klass ):
         return "move_to_outbox"
 
     def execute( self, computer ):
@@ -64,12 +69,18 @@ class MoveToOutbox( CPUInstruction ):
         computer.program_counter += 1
 
 
-class CopyTo( CPUInstruction ):
+class AbstractTileCommand( CPUInstruction ):
     def __str__( self ):
-        return "copy_to [{}]".format(self.tile_index)
+        return "{} [{}]".format(self.token(), self.tile_index)
 
     def __init__( self, tile_index ):
         self.tile_index = tile_index
+
+
+class CopyTo( AbstractTileCommand ):
+    @classmethod
+    def token( klass ):
+        return "copy_to"
 
     def execute( self, computer ):
         computer.assertAccumulatorIsNotEmpty()
@@ -77,12 +88,10 @@ class CopyTo( CPUInstruction ):
         computer.program_counter += 1
 
 
-class CopyFrom( CPUInstruction ):
-    def __str__( self ):
-        return "copy_from [{}]".format(self.tile_index)
-
-    def __init__( self, tile_index ):
-        self.tile_index = tile_index
+class CopyFrom( AbstractTileCommand ):
+    @classmethod
+    def token( klass ):
+        return "copy_from"
 
     def execute( self, computer ):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
@@ -90,12 +99,10 @@ class CopyFrom( CPUInstruction ):
         computer.program_counter += 1
 
 
-class AddFrom( CPUInstruction ):
-    def __str__( self ):
-        return "add_from [{}]".format(self.tile_index)
-
-    def __init__( self, tile_index ):
-        self.tile_index = tile_index
+class AddFrom( AbstractTileCommand ):
+    @classmethod
+    def token( klass ):
+        return "add_from"
 
     def execute( self, computer ):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
@@ -103,12 +110,10 @@ class AddFrom( CPUInstruction ):
         computer.program_counter += 1
 
 
-class SubtractFrom( CPUInstruction ):
-    def __str__( self ):
-        return "subtract_from [{}]".format(self.tile_index)
-
-    def __init__( self, tile_index ):
-        self.tile_index = tile_index
+class SubtractFrom( AbstractTileCommand ):
+    @classmethod
+    def token( klass ):
+        return "subtract_from"
 
     def execute( self, computer ):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
@@ -117,8 +122,12 @@ class SubtractFrom( CPUInstruction ):
 
 
 class Jump( CPUInstruction ):
+    @classmethod
+    def token( klass ):
+        return "jump_to"
+
     def __str__( self ):
-        return "jump_to {:03d}".format(self.destination_pc)
+        return "{} {:03d}".format(self.token(), self.destination_pc)
 
     def __init__( self, destination_pc ):
         self.destination_pc = destination_pc
@@ -128,6 +137,10 @@ class Jump( CPUInstruction ):
 
 
 class JumpIfZero( Jump ):
+    @classmethod
+    def token( klass ):
+        return "jump_if_zero_to"
+
     def execute( self, computer ):
         computer.assertAccumulatorIsNotEmpty()
         if computer.accumulator == 0:
@@ -137,6 +150,10 @@ class JumpIfZero( Jump ):
 
 
 class JumpIfNegative( Jump ):
+    @classmethod
+    def token( klass ):
+        return "jump_if_negative_to"
+
     def execute( self, computer ):
         computer.assertAccumulatorIsNotEmpty()
         if computer.accumulator < 0:
@@ -145,9 +162,10 @@ class JumpIfNegative( Jump ):
             computer.program_counter += 1
 
 
-class BumpUp( CPUInstruction ):
-    def __str__( self ):
-        return "bump_up [{}]".format(self.tile_index)
+class BumpUp( AbstractTileCommand ):
+    @classmethod
+    def token( klass ):
+        return "bump_up"
 
     def __init__( self, tile_index ):
         self.tile_index = tile_index
@@ -159,9 +177,10 @@ class BumpUp( CPUInstruction ):
         computer.program_counter += 1
 
 
-class BumpDown( CPUInstruction ):
-    def __str__( self ):
-        return "bump_down [{}]".format(self.tile_index)
+class BumpDown( AbstractTileCommand ):
+    @classmethod
+    def token( klass ):
+        return "bump_down"
 
     def __init__( self, tile_index ):
         self.tile_index = tile_index
@@ -187,8 +206,10 @@ def main():
         MoveToOutbox(),
         Jump(0)
     ]
+    print()
     for i, instruction in enumerate(computer.program):
         print("{:03d}: {}".format(i, str(instruction)))
+    print()
 
     try:
         computer.run_program()
