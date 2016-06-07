@@ -77,7 +77,7 @@ class MoveToOutbox( CPUInstruction ):
         computer.program_counter += 1
 
 
-class AbstractTileCommand( CPUInstruction ):
+class AbstractTileInstruction( CPUInstruction ):
     has_argument = True
 
     def __str__( self ):
@@ -87,7 +87,7 @@ class AbstractTileCommand( CPUInstruction ):
         self.tile_index = tile_index
 
 
-class CopyTo( AbstractTileCommand ):
+class CopyTo( AbstractTileInstruction ):
     token = "copy_to"
 
     def execute( self, computer ):
@@ -96,7 +96,7 @@ class CopyTo( AbstractTileCommand ):
         computer.program_counter += 1
 
 
-class CopyFrom( AbstractTileCommand ):
+class CopyFrom( AbstractTileInstruction ):
     token = "copy_from"
 
     def execute( self, computer ):
@@ -105,7 +105,7 @@ class CopyFrom( AbstractTileCommand ):
         computer.program_counter += 1
 
 
-class Add( AbstractTileCommand ):
+class Add( AbstractTileInstruction ):
     token = "add"
 
     def execute( self, computer ):
@@ -114,7 +114,7 @@ class Add( AbstractTileCommand ):
         computer.program_counter += 1
 
 
-class Subtract( AbstractTileCommand ):
+class Subtract( AbstractTileInstruction ):
     token = "subtract"
 
     def execute( self, computer ):
@@ -159,7 +159,7 @@ class JumpIfNegative( Jump ):
             computer.program_counter += 1
 
 
-class BumpUp( AbstractTileCommand ):
+class BumpUp( AbstractTileInstruction ):
     token = "bump_up"
 
     def __init__( self, tile_index ):
@@ -172,7 +172,7 @@ class BumpUp( AbstractTileCommand ):
         computer.program_counter += 1
 
 
-class BumpDown( AbstractTileCommand ):
+class BumpDown( AbstractTileInstruction ):
     token = "bump_down"
 
     def __init__( self, tile_index ):
@@ -222,11 +222,12 @@ class Assembler:
 
 
 def main():
-    asm = Assembler()
-
     computer = Computer()
     computer.inbox = [1, -2, 3, -4, 5, -6]
+
+    asm = Assembler()
     computer.program = asm.load_program('programs/Absolute_Positivity.hrm')
+
     print()
     computer.print_program()
     print()
