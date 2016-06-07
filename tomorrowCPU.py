@@ -20,6 +20,10 @@ class Computer:
         while self.program_counter < len(self.program):
             self.program[self.program_counter].execute(self)
 
+    def print_program( self ):
+        for i, instruction in enumerate(self.program):
+            print("{:03d}: {}".format(i, str(instruction)))
+
     def assertInboxIsNotEmpty( self ):
         if not len(self.inbox):
             raise InboxIsEmptyError()
@@ -207,8 +211,7 @@ def main():
         Jump(0)
     ]
     print()
-    for i, instruction in enumerate(computer.program):
-        print("{:03d}: {}".format(i, str(instruction)))
+    computer.print_program()
     print()
 
     try:
