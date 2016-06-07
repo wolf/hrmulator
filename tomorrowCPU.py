@@ -107,10 +107,10 @@ class CopyFrom( AbstractTileCommand ):
         computer.program_counter += 1
 
 
-class AddFrom( AbstractTileCommand ):
+class Add( AbstractTileCommand ):
     @classmethod
     def token( klass ):
-        return "add_from"
+        return "add"
 
     def execute( self, computer ):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
@@ -118,10 +118,10 @@ class AddFrom( AbstractTileCommand ):
         computer.program_counter += 1
 
 
-class SubtractFrom( AbstractTileCommand ):
+class Subtract( AbstractTileCommand ):
     @classmethod
     def token( klass ):
-        return "subtract_from"
+        return "subtract"
 
     def execute( self, computer ):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
@@ -209,8 +209,8 @@ def main():
         JumpIfNegative(3),
         Jump(6),
         CopyTo(0),
-        SubtractFrom(0),
-        SubtractFrom(0),
+        Subtract(0),
+        Subtract(0),
         MoveToOutbox(),
         Jump(0)
     ]
