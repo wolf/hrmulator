@@ -177,9 +177,11 @@ class BumpDown( CPUInstruction ):
 def main():
     computer = Computer()
     computer.inbox = [1, 2, 3, 4, 5, 6]
-    computer.program.append(MoveFromInbox())
-    computer.program.append(MoveToOutbox())
-    computer.program.append(Jump(0))
+    computer.program = [
+        MoveFromInbox(),
+        MoveToOutbox(),
+        Jump(0)
+    ]
     for i, instruction in enumerate(computer.program):
         print("{:03d}: {}".format(i, str(instruction)))
 
