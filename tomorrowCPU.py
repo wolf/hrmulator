@@ -14,6 +14,7 @@ class Computer:
         self.program = []
         self.accumulator = None
         self.memory = {}
+        self.break_points = {}
 
     def run_program( self ):
         self.program_counter = 0
@@ -29,7 +30,11 @@ class Computer:
 
     def print_program( self ):
         for i, instruction in enumerate(self.program):
-            print("{}{:03d}: {}".format('*' if i==self.program_counter else ' ', i, instruction))
+            print("{}{}{:03d}: {}".format(
+                '*' if self.break_points.get(i, False) else ' ',
+                '@' if i==self.program_counter else ' ',
+                i,
+                instruction))
 
     def assertInboxIsNotEmpty( self ):
         if not len(self.inbox):
@@ -229,6 +234,8 @@ def main():
     computer.program = asm.load_program('programs/Absolute_Positivity.hrm')
 
     print()
+    computer.break_points[3] = True
+    computer.program_counter = 5
     computer.print_program()
     print()
 
