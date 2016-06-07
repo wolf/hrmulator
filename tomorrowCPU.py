@@ -1,3 +1,5 @@
+import re
+
 class ComputerError( Exception ): pass
 class InboxIsEmptyError( ComputerError ): pass
 class AccumulatorIsEmptyError( ComputerError ): pass
@@ -200,6 +202,20 @@ class Assembler:
 
     def __init__( self ):
         self.symbolCatalog = {klass.token: klass for klass in self.InstructionCatalog}
+
+    def load_program( self, path ):
+        program = []
+        with open(path, 'r') as infile:
+            for line in infile:
+                # parse with regexp
+                # look up symbol in self.symbolCatalog
+                # decide if it has an argument
+                if klass.has_argument:
+                    instruction = klass(argument)
+                else:
+                    instruction = klass()
+                program.append(instruction)
+        return program
 
 
 def main():
