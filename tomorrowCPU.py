@@ -1,6 +1,3 @@
-# 'bump + <tile>'
-# 'bump - <tile>'
-
 class ComputerError( Exception ): pass
 class InboxIsEmptyError( ComputerError ): pass
 class AccumulatorIsEmptyError( ComputerError ): pass
@@ -10,15 +7,22 @@ class Computer:
     def __init__( self ):
         self.inbox = []
         self.outbox = []
-        self.program_counter = 0
+        self.program_counter = None
         self.program = []
         self.accumulator = None
         self.memory = {}
 
     def run_program( self ):
         self.program_counter = 0
-        while self.program_counter < len(self.program):
-            self.program[self.program_counter].execute(self)
+        try:
+            while self.program_counter < len(self.program):
+                self.program[self.program_counter].execute(self)
+        except InboxIsEmptyError:
+            pass
+        self.program_counter = None
+
+    def is_running( self ):
+        return program_counter is not None and 0 <= self.program_counter < len(self.program)
 
     def print_program( self ):
         for i, instruction in enumerate(self.program):
@@ -214,10 +218,7 @@ def main():
     computer.print_program()
     print()
 
-    try:
-        computer.run_program()
-    except InboxIsEmptyError:
-        pass
+    computer.run_program()
 
     print(computer.outbox)
 
