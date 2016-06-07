@@ -1,3 +1,4 @@
+from __future__ import print_function
 import re
 
 class ComputerError( Exception ): pass
@@ -204,33 +205,27 @@ class Assembler:
         self.symbolCatalog = {klass.token: klass for klass in self.InstructionCatalog}
 
     def load_program( self, path ):
+        statement_re = re.compile('([a-zA-Z_]+)(?:[\s\t]+\[?([0-9]+)\]?)?\n')
         program = []
         with open(path, 'r') as infile:
             for line in infile:
-                # parse with regexp
-                # look up symbol in self.symbolCatalog
-                # decide if it has an argument
-                if klass.has_argument:
-                    instruction = klass(argument)
-                else:
-                    instruction = klass()
-                program.append(instruction)
+                match = re.match(statement_re, line)
+                if match is not None:
+                    klass = self.symbolCatalog[match.group(1)]
+                    if klass.has_argument:
+                        instruction = klass(int(match.group(2)))
+                    else:
+                        instruction = klass()
+                    program.append(instruction)
         return program
 
 
 def main():
+    asm = Assembler()
+
     computer = Computer()
     computer.inbox = [1, -2, 3, -4, 5, -6]
-    computer.program = [
-        MoveFromInbox(),
-        JumpIfNegative(3),
-        Jump(6),
-        CopyTo(0),
-        Subtract(0),
-        Subtract(0),
-        MoveToOutbox(),
-        Jump(0)
-    ]
+    computer.program = asm.load_program('programs/Absolute_Positivity.hrm')
     print()
     computer.print_program()
     print()
@@ -238,12 +233,6 @@ def main():
     computer.run_program()
 
     print(computer.outbox)
-
-    for instruction in Assembler.InstructionCatalog:
-        print("{} {}".format(instruction.token, "#" if instruction.has_argument else ''))
-
-    asm = Assembler()
-    print(asm.symbolCatalog)
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,8 @@
+move_from_inbox
+jump_if_negative_to 003
+jump_to 006
+copy_to [0]
+subtract [0]
+subtract [0]
+move_to_outbox
+jump_to 000
