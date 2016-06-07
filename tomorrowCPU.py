@@ -181,20 +181,26 @@ class BumpDown( AbstractTileCommand ):
         computer.program_counter += 1
 
 
-InstructionCatalog = [
-    NoOp,
-    MoveFromInbox,
-    MoveToOutbox,
-    CopyTo,
-    CopyFrom,
-    Add,
-    Subtract,
-    Jump,
-    JumpIfZero,
-    JumpIfNegative,
-    BumpUp,
-    BumpDown
-]
+
+class Assembler:
+    InstructionCatalog = [
+        NoOp,
+        MoveFromInbox,
+        MoveToOutbox,
+        CopyTo,
+        CopyFrom,
+        Add,
+        Subtract,
+        Jump,
+        JumpIfZero,
+        JumpIfNegative,
+        BumpUp,
+        BumpDown
+    ]
+
+    def __init__( self ):
+        self.symbolCatalog = {klass.token: klass for klass in self.InstructionCatalog}
+
 
 def main():
     computer = Computer()
@@ -217,8 +223,11 @@ def main():
 
     print(computer.outbox)
 
-    for instruction in InstructionCatalog:
-        print("{} {}".format(instruction.token, "arg" if instruction.has_argument else ''))
+    for instruction in Assembler.InstructionCatalog:
+        print("{} {}".format(instruction.token, "#" if instruction.has_argument else ''))
+
+    asm = Assembler()
+    print(asm.symbolCatalog)
 
 if __name__ == '__main__':
     main()
