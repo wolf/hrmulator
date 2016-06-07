@@ -26,6 +26,14 @@ class Computer:
             for instruction in self.program:
                 outfile.write("{}\n".format(instruction))
 
+    def print_program( self ):
+        for i, instruction in enumerate(self.program):
+            print("{}{}{:03d}: {}".format(
+                '*' if self.break_points.get(i, False) else ' ',
+                '@' if i==self.program_counter else ' ',
+                i,
+                instruction))
+
     def run_program( self ):
         self.program_counter = 0
         try:
@@ -37,14 +45,6 @@ class Computer:
 
     def is_running( self ):
         return program_counter is not None and 0 <= self.program_counter < len(self.program)
-
-    def print_program( self ):
-        for i, instruction in enumerate(self.program):
-            print("{}{}{:03d}: {}".format(
-                '*' if self.break_points.get(i, False) else ' ',
-                '@' if i==self.program_counter else ' ',
-                i,
-                instruction))
 
     def assertInboxIsNotEmpty( self ):
         if not len(self.inbox):
