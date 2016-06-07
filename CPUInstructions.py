@@ -1,3 +1,31 @@
+"""
+These are the individual instructions which the Computer can execute.  They
+have intimate knowledge of the computer and do things like directly update the
+accumulator and the program_counter.  There are 12 concrete instructions:
+
+    exported class name     assembler symbol
+
+    NoOp                    no_op
+    MoveFromInbox           move_from_inbox
+    MoveToOutbox            move_to_outbox
+    CopyTo                  copy_to
+    CopyFrom                copy_from
+    Add                     add
+    Subtract                subtract
+    Jump                    jump_to
+    JumpIfZero              jump_if_zero_to
+    JumpIfNegative          jump_if_negative_to
+    BumpUp                  bump_up
+    BumpDown                bump_down
+
+In each case the class variable `token` is used both for printing and for the
+symbol lookup needed in the assembler.  The `execute` function does the main
+work.  `__init__` and `has_argument` cooperate to collect the argument in the
+assembler.  The `__str__` function does the job of building a printable and
+machine readable instruction out of `token`.
+
+"""
+
 class CPUInstruction:
     has_argument = False
 
@@ -6,6 +34,7 @@ class CPUInstruction:
 
 
 class NoOp( CPUInstruction ):
+    """Do nothing.  Counts as a step executed when evaluating the optimization challenges."""
     token = "no_op"
 
     def execute( self, computer ):
@@ -14,6 +43,14 @@ class NoOp( CPUInstruction ):
 
 
 class MoveFromInbox( CPUInstruction ):
+    """
+    Pop a value off the inbox and put it in the accumulator.
+
+    The old value of the accumulator is discarded.  If the inbox is empty, an
+    exception is thrown that nicely terminates this run of the (inner)
+    program.  That is, it does _not_ terminate this Python script: it
+    terminates the inner hrm program.
+    """
     token = "move_from_inbox"
 
     def execute( self, computer ):
@@ -124,6 +161,7 @@ class JumpIfNegative( Jump ):
 
 
 class BumpUp( AbstractTileInstruction ):
+    """Increment the value in a given memory tile by 1, and copy it into the accumulator."""
     token = "bump_up"
 
     def __init__( self, tile_index ):
@@ -138,6 +176,7 @@ class BumpUp( AbstractTileInstruction ):
 
 
 class BumpDown( AbstractTileInstruction ):
+    """Decrement the value in a given memory tile by 1, and copy it into the accumulator."""
     token = "bump_down"
 
     def __init__( self, tile_index ):
