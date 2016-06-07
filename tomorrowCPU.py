@@ -11,6 +11,7 @@ class Computer:
         self.inbox = []
         self.outbox = []
         self.program_counter = None
+        self.total_steps_executed = None
         self.program = []
         self.accumulator = None
         self.memory = {}
@@ -18,7 +19,7 @@ class Computer:
 
     def load_program( self, path ):
         asm = Assembler()
-        self.program = asm.load_program(path)
+        self.program = asm.assemble_program(path)
         self.break_points = {}
 
     def dump_program( self, path ):
@@ -36,6 +37,7 @@ class Computer:
 
     def run_program( self ):
         self.program_counter = 0
+        self.total_steps_executed = 0
         try:
             while self.program_counter < len(self.program):
                 self.program[self.program_counter].execute(self)
@@ -71,6 +73,7 @@ class NoOp( CPUInstruction ):
 
     def execute( self, computer ):
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class MoveFromInbox( CPUInstruction ):
@@ -80,6 +83,7 @@ class MoveFromInbox( CPUInstruction ):
         computer.assertInboxIsNotEmpty()
         computer.accumulator = computer.inbox.pop()
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class MoveToOutbox( CPUInstruction ):
@@ -90,6 +94,7 @@ class MoveToOutbox( CPUInstruction ):
         computer.outbox.append(computer.accumulator)
         computer.accumulator = None
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class AbstractTileInstruction( CPUInstruction ):
@@ -109,6 +114,7 @@ class CopyTo( AbstractTileInstruction ):
         computer.assertAccumulatorIsNotEmpty()
         computer.memory[self.tile_index] = computer.accumulator
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class CopyFrom( AbstractTileInstruction ):
@@ -118,6 +124,7 @@ class CopyFrom( AbstractTileInstruction ):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
         computer.accumulator = computer.memory[self.tile_index]
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class Add( AbstractTileInstruction ):
@@ -127,6 +134,7 @@ class Add( AbstractTileInstruction ):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
         computer.accumulator += computer.memory[self.tile_index]
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class Subtract( AbstractTileInstruction ):
@@ -136,6 +144,7 @@ class Subtract( AbstractTileInstruction ):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
         computer.accumulator -= computer.memory[self.tile_index]
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class Jump( CPUInstruction ):
@@ -150,6 +159,7 @@ class Jump( CPUInstruction ):
 
     def execute( self, computer ):
         computer.program_counter = self.destination_pc
+        computer.total_steps_executed += 1
 
 
 class JumpIfZero( Jump ):
@@ -161,6 +171,7 @@ class JumpIfZero( Jump ):
             computer.program_counter = self.destination_pc
         else:
             computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class JumpIfNegative( Jump ):
@@ -172,6 +183,7 @@ class JumpIfNegative( Jump ):
             computer.program_counter = self.destination_pc
         else:
             computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class BumpUp( AbstractTileInstruction ):
@@ -185,6 +197,7 @@ class BumpUp( AbstractTileInstruction ):
         computer.memory[self.tile_index] += 1
         computer.accumulator = computer.memory[self.tile_index]
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 class BumpDown( AbstractTileInstruction ):
@@ -198,6 +211,7 @@ class BumpDown( AbstractTileInstruction ):
         computer.memory[self.tile_index] -= 1
         computer.accumulator = computer.memory[self.tile_index]
         computer.program_counter += 1
+        computer.total_steps_executed += 1
 
 
 
@@ -220,7 +234,7 @@ class Assembler:
     def __init__( self ):
         self.symbolCatalog = {klass.token: klass for klass in self.InstructionCatalog}
 
-    def load_program( self, path ):
+    def assemble_program( self, path ):
         statement_re = re.compile('[\s\t]*([a-zA-Z_]+)(?:[\s\t]+\[?([0-9]+)\]?)?(?:[\s\t]+#.*)?[\s\t]*\n')
         program = []
         with open(path, 'r') as infile:
