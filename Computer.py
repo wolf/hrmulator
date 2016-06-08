@@ -68,18 +68,17 @@ class Computer:
 
 def main():
     computer = Computer()
-    computer.inbox = [1, -2, 3, -4, 5, -6]
+    computer.inbox = ['B', 'O', 'O', 'T', 'S', 'E', 'Q']
 
     print()
-    computer.load_program('programs/Absolute_Positivity.hrm')
-    computer.break_points[3] = True
-    computer.program_counter = 5
+    computer.load_program('programs/Busy_Mail_Room_size.hrm')
     computer.print_program()
     print()
 
     computer.run_program()
 
     print(computer.outbox)
+    print("Program size: {}; Total steps executed: {}".format(len(computer.program), computer.total_steps_executed))
 
 if __name__ == '__main__':
     main()

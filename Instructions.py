@@ -26,14 +26,15 @@ machine readable instruction out of `token`.
 
 """
 
-class CPUInstruction:
+class AbstractInstruction:
+    """Base class for all instructions."""
     has_argument = False
 
     def __str__( self ):
         return self.token
 
 
-class NoOp( CPUInstruction ):
+class NoOp( AbstractInstruction ):
     """Do nothing.  Counts as a step executed when evaluating the optimization challenges."""
     token = "no_op"
 
@@ -42,7 +43,7 @@ class NoOp( CPUInstruction ):
         computer.total_steps_executed += 1
 
 
-class MoveFromInbox( CPUInstruction ):
+class MoveFromInbox( AbstractInstruction ):
     """
     Pop a value off the inbox and put it in the accumulator.
 
@@ -60,7 +61,7 @@ class MoveFromInbox( CPUInstruction ):
         computer.total_steps_executed += 1
 
 
-class MoveToOutbox( CPUInstruction ):
+class MoveToOutbox( AbstractInstruction ):
     token = "move_to_outbox"
 
     def execute( self, computer ):
@@ -71,7 +72,7 @@ class MoveToOutbox( CPUInstruction ):
         computer.total_steps_executed += 1
 
 
-class AbstractTileInstruction( CPUInstruction ):
+class AbstractTileInstruction( AbstractInstruction ):
     has_argument = True
 
     def __str__( self ):
@@ -121,7 +122,8 @@ class Subtract( AbstractTileInstruction ):
         computer.total_steps_executed += 1
 
 
-class Jump( CPUInstruction ):
+class Jump( AbstractInstruction ):
+    """Jump (unconditionally) to the supplied program step."""
     token = "jump_to"
     has_argument = True
 
@@ -137,6 +139,7 @@ class Jump( CPUInstruction ):
 
 
 class JumpIfZero( Jump ):
+    """Jump if and only if the accumulator == 0 to the supplied program step."""
     token = "jump_if_zero_to"
 
     def execute( self, computer ):
@@ -149,6 +152,11 @@ class JumpIfZero( Jump ):
 
 
 class JumpIfNegative( Jump ):
+    """
+    Jump if and only if the accumulator is less than zero to the supplied program step.
+
+    Note: it is a fatal error if the value in the accumulator is not comparable to zero.
+    """
     token = "jump_if_negative_to"
 
     def execute( self, computer ):

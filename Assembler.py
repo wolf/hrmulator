@@ -1,22 +1,22 @@
 import re
 
-from CPUInstructions import *
+import Instructions
 
 
 class Assembler:
     InstructionCatalog = [
-        NoOp,
-        MoveFromInbox,
-        MoveToOutbox,
-        CopyTo,
-        CopyFrom,
-        Add,
-        Subtract,
-        Jump,
-        JumpIfZero,
-        JumpIfNegative,
-        BumpUp,
-        BumpDown
+        Instructions.NoOp,
+        Instructions.MoveFromInbox,
+        Instructions.MoveToOutbox,
+        Instructions.CopyTo,
+        Instructions.CopyFrom,
+        Instructions.Add,
+        Instructions.Subtract,
+        Instructions.Jump,
+        Instructions.JumpIfZero,
+        Instructions.JumpIfNegative,
+        Instructions.BumpUp,
+        Instructions.BumpDown
     ]
 
     def __init__( self ):
