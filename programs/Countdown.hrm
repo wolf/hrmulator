@@ -1,6 +1,3 @@
-    jump_to START
-FINISH:
-    move_to_outbox
 START:
     move_from_inbox
     copy_to [0]
@@ -18,3 +15,6 @@ COUNT_UP:
     jump_if_zero_to FINISH
     move_to_outbox
     jump_to COUNT_UP
+FINISH:
+    move_to_outbox
+    jump_to START

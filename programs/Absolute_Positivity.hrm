@@ -1,8 +1,11 @@
-move_from_inbox
-jump_if_negative_to 003
-jump_to 006
-copy_to [0]
-subtract [0]    # accumulator gets 0
-subtract [0]    # accumulator gets 0-value --> making it positive
-move_to_outbox
-jump_to 000
+START:
+    move_from_inbox
+    jump_if_negative_to ITS_NEGATIVE
+    jump_to ITS_POSITIVE
+ITS_NEGATIVE:
+    copy_to [0]
+    subtract [0]    # accumulator gets 0
+    subtract [0]    # accumulator gets 0-value --> making it positive
+ITS_POSITIVE:
+    move_to_outbox
+    jump_to START
