@@ -196,3 +196,19 @@ class BumpDown( AbstractTileInstruction ):
         computer.accumulator = computer.memory[self.tile_index]
         computer.program_counter += 1
         computer.total_steps_executed += 1
+
+
+InstructionCatalog = [
+    NoOp,
+    MoveFromInbox,
+    MoveToOutbox,
+    CopyTo,
+    CopyFrom,
+    Add,
+    Subtract,
+    Jump,
+    JumpIfZero,
+    JumpIfNegative,
+    BumpUp,
+    BumpDown
+]

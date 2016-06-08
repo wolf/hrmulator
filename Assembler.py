@@ -1,26 +1,11 @@
 import re
 
-import Instructions
+from Instructions import InstructionCatalog
 
 
 class Assembler:
-    InstructionCatalog = [
-        Instructions.NoOp,
-        Instructions.MoveFromInbox,
-        Instructions.MoveToOutbox,
-        Instructions.CopyTo,
-        Instructions.CopyFrom,
-        Instructions.Add,
-        Instructions.Subtract,
-        Instructions.Jump,
-        Instructions.JumpIfZero,
-        Instructions.JumpIfNegative,
-        Instructions.BumpUp,
-        Instructions.BumpDown
-    ]
-
     def __init__( self ):
-        self.symbolCatalog = {klass.token: klass for klass in self.InstructionCatalog}
+        self.symbolCatalog = {klass.token: klass for klass in InstructionCatalog}
 
     def assemble_program( self, path ):
         statement_re = re.compile('[\s\t]*([a-zA-Z_]+)(?:[\s\t]+\[?([0-9]+)\]?)?(?:[\s\t]+#.*)?[\s\t]*\n')
