@@ -1,3 +1,4 @@
-move_from_inbox
-move_to_outbox
-jump_to 000
+START:
+    move_from_inbox
+    move_to_outbox
+    jump_to START
