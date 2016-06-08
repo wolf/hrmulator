@@ -15,10 +15,13 @@ class Assembler:
         step = 0
         with open(path, 'r') as infile:
             for line in infile:
+                # if it's a label, save it in the jump_table
                 match = re.match(label_re, line)
                 if match is not None:
                     jump_table[match.group(1)] = step
                     continue
+
+                # if it's an instruction, append it to the program
                 match = re.match(statement_re, line)
                 if match is not None:
                     klass = self.symbolCatalog[match.group(1)]
