@@ -1,0 +1,30 @@
+    jump_to START
+FINISH:
+    copy_to_outbox
+START:
+    copy_from_inbox
+    copy_to [0]
+    copy_to_outbox
+    copy_from [0]
+    jump_if_negative_to COUNT_UP
+    jump_if_zero_to START
+COUNT_DOWN:
+    bump_down [0]
+    jump_if_zero_to FINISH
+    copy_from_outbox
+    jump_to COUNT_DOWN
+COUNT_UP:
+    bump_up [0]
+    jump_if_zero_to FINISH
+    copy_to_outbox
+    jump_to COUNT_UP
+
+
+
+
+
+
+
+
+copy_from_inbox
+copy_to [0]

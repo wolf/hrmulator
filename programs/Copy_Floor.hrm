@@ -1,0 +1,6 @@
+copy_from [4]
+move_to_outbox
+copy_from [0]
+move_to_outbox
+copy_from [3]
+move_to_outbox
