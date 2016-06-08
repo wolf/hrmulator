@@ -68,10 +68,10 @@ class Computer:
 
 def main():
     computer = Computer()
-    computer.inbox = ['B', 'O', 'O', 'T', 'S', 'E', 'Q']
+    computer.inbox = ['B', 'O', 'O', 'T', 'S', 'E', 'Q', 'U', 'E', 'N', 'C', 'E']
 
     print()
-    computer.load_program('programs/Busy_Mail_Room_size.hrm')
+    computer.load_program('programs/Busy_Mail_Room_speed.hrm')
     computer.print_program()
     print()
 
