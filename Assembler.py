@@ -4,12 +4,14 @@ from Instructions import InstructionCatalog
 
 
 class Assembler:
-    def __init__( self ):
-        self.symbolCatalog = {klass.token: klass for klass in InstructionCatalog}
+    def __init__(self):
+        self.symbolCatalog = {ins.token: ins for ins in InstructionCatalog}
 
-    def assemble_program( self, path ):
+    def assemble_program(self, path):
         label_re = re.compile('([A-Z_]+):\s*\n?')
-        statement_re = re.compile('[\ \t]*([a-zA-Z_]+)(?:[\ \t]+\[?([0-9]+|[A-Z_]+)\]?)?(?:[\ \t]+#.*)?[\ \t]*\n?')
+        statement_re = re.compile(
+            '\s*([a-zA-Z_]+)(?:\s+\[?([0-9]+|[A-Z_]+)\]?)?(?:\s+#.*)?\s*\n?'
+        )
         program = []
         jump_table = {}
         step = 0

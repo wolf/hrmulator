@@ -26,24 +26,29 @@ machine readable instruction out of `token`.
 
 """
 
+
 class AbstractInstruction:
     """Base class for all instructions."""
     has_argument = False
 
-    def __str__( self ):
+    def __str__(self):
         return self.token
 
 
-class NoOp( AbstractInstruction ):
-    """Do nothing.  Counts as a step executed when evaluating the optimization challenges."""
+class NoOp(AbstractInstruction):
+    """
+    Do nothing.
+
+    Counts as a step executed when evaluating the optimization challenges.
+    """
     token = "no_op"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
 
-class MoveFromInbox( AbstractInstruction ):
+class MoveFromInbox(AbstractInstruction):
     """
     Pop a value off the inbox and put it in the accumulator.
 
@@ -54,17 +59,17 @@ class MoveFromInbox( AbstractInstruction ):
     """
     token = "move_from_inbox"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertInboxIsNotEmpty()
         computer.accumulator = computer.inbox.pop()
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
 
-class MoveToOutbox( AbstractInstruction ):
+class MoveToOutbox(AbstractInstruction):
     token = "move_to_outbox"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertAccumulatorIsNotEmpty()
         computer.outbox.append(computer.accumulator)
         computer.accumulator = None
@@ -72,77 +77,79 @@ class MoveToOutbox( AbstractInstruction ):
         computer.total_steps_executed += 1
 
 
-class AbstractTileInstruction( AbstractInstruction ):
+class AbstractTileInstruction(AbstractInstruction):
     has_argument = True
 
-    def __str__( self ):
+    def __str__(self):
         return "{} [{}]".format(self.token, self.tile_index)
 
-    def __init__( self, tile_index ):
+    def __init__(self, tile_index):
         self.tile_index = tile_index
 
 
-class CopyTo( AbstractTileInstruction ):
+class CopyTo(AbstractTileInstruction):
     token = "copy_to"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertAccumulatorIsNotEmpty()
         computer.memory[self.tile_index] = computer.accumulator
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
 
-class CopyFrom( AbstractTileInstruction ):
+class CopyFrom(AbstractTileInstruction):
     token = "copy_from"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
         computer.accumulator = computer.memory[self.tile_index]
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
 
-class Add( AbstractTileInstruction ):
+class Add(AbstractTileInstruction):
     token = "add"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
         computer.accumulator += computer.memory[self.tile_index]
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
 
-class Subtract( AbstractTileInstruction ):
+class Subtract(AbstractTileInstruction):
     token = "subtract"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
         computer.accumulator -= computer.memory[self.tile_index]
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
 
-class Jump( AbstractInstruction ):
+class Jump(AbstractInstruction):
     """Jump (unconditionally) to the supplied program step."""
     token = "jump_to"
     has_argument = True
 
-    def __str__( self ):
+    def __str__(self):
         return "{} {:03d}".format(self.token, self.destination_pc)
 
-    def __init__( self, destination_pc ):
+    def __init__(self, destination_pc):
         self.destination_pc = destination_pc
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.program_counter = self.destination_pc
         computer.total_steps_executed += 1
 
 
-class JumpIfZero( Jump ):
-    """Jump if and only if the accumulator == 0 to the supplied program step."""
+class JumpIfZero(Jump):
+    """
+    Jump if and only if the accumulator == 0 to the supplied program step.
+    """
     token = "jump_if_zero_to"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertAccumulatorIsNotEmpty()
         if computer.accumulator == 0:
             computer.program_counter = self.destination_pc
@@ -151,15 +158,17 @@ class JumpIfZero( Jump ):
         computer.total_steps_executed += 1
 
 
-class JumpIfNegative( Jump ):
+class JumpIfNegative(Jump):
     """
-    Jump if and only if the accumulator is less than zero to the supplied program step.
+    Jump if and only if the accumulator is less than zero to the supplied
+    program step.
 
-    Note: it is a fatal error if the value in the accumulator is not comparable to zero.
+    Note: it is a fatal error if the value in the accumulator is not
+    comparable to zero.
     """
     token = "jump_if_negative_to"
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertAccumulatorIsNotEmpty()
         if computer.accumulator < 0:
             computer.program_counter = self.destination_pc
@@ -168,14 +177,17 @@ class JumpIfNegative( Jump ):
         computer.total_steps_executed += 1
 
 
-class BumpUp( AbstractTileInstruction ):
-    """Increment the value in a given memory tile by 1, and copy it into the accumulator."""
+class BumpUp(AbstractTileInstruction):
+    """
+    Increment the value in a given memory tile by 1, and copy it into the
+    accumulator.
+    """
     token = "bump_up"
 
-    def __init__( self, tile_index ):
+    def __init__(self, tile_index):
         self.tile_index = tile_index
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
         computer.memory[self.tile_index] += 1
         computer.accumulator = computer.memory[self.tile_index]
@@ -183,14 +195,17 @@ class BumpUp( AbstractTileInstruction ):
         computer.total_steps_executed += 1
 
 
-class BumpDown( AbstractTileInstruction ):
-    """Decrement the value in a given memory tile by 1, and copy it into the accumulator."""
+class BumpDown(AbstractTileInstruction):
+    """
+    Decrement the value in a given memory tile by 1, and copy it into the
+    accumulator.
+    """
     token = "bump_down"
 
-    def __init__( self, tile_index ):
+    def __init__(self, tile_index):
         self.tile_index = tile_index
 
-    def execute( self, computer ):
+    def execute(self, computer):
         computer.assertMemoryTileIsNotEmpty(self.tile_index)
         computer.memory[self.tile_index] -= 1
         computer.accumulator = computer.memory[self.tile_index]
