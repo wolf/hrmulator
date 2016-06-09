@@ -1,0 +1,15 @@
+START:
+    move_from_inbox
+    copy_to [0] # [0]->1x, acc->1x
+    add [0]     #          acc->2x
+    copy_to [1] # [1]->2x
+    add [1]     #          acc->4x
+    add [0]     #          acc->5x
+    copy_to [2] # [2]->5x
+    add [2]     #          acc->10x
+    copy_to [2] # [2]->10x
+    add [2]     #          acc->20x
+    copy_to [2] # [2]->20x
+    add [2]     #          acc->40x
+    move_to_outbox
+    jump_to START
