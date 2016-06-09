@@ -78,17 +78,24 @@ class Computer:
 def main():
     computer = Computer()
     computer.inbox = [
-        'B', 'O', 'O', 'T', 'S', 'E', 'Q', 'U', 'E', 'N', 'C', 'E'
+        3, 2, -7, -2, 1, 1, -9, 2
     ]
 
+    printable_inbox = computer.inbox[:]
+
     print()
-    computer.load_program('programs/Busy_Mail_Room_speed.hrm')
+    computer.load_program('programs/Maximization_Room_speed.hrm')
     computer.print_program()
     print()
 
     computer.run_program()
 
-    print(computer.outbox)
+    print("Inbox:")
+    print(printable_inbox)
+    print("Outbox:")
+    printable_outbox = computer.outbox[::-1]
+    print(printable_outbox)
+    print()
     print("Program size: {}; Total steps executed: {}".format(
         len(computer.program),
         computer.total_steps_executed
