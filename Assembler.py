@@ -28,7 +28,12 @@ class Assembler:
                 if match is not None:
                     klass = self.symbolCatalog[match.group(1)]
                     if klass.has_argument:
-                        instruction = klass(match.group(2))
+                        arg = match.group(2)
+                        try:
+                            arg = int(arg)
+                        except ValueError:
+                            pass
+                        instruction = klass(arg)
                     else:
                         instruction = klass()
                     program.append(instruction)
