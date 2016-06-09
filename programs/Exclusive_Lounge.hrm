@@ -1,0 +1,25 @@
+    jump_to START
+SAME:
+    copy_from [4]
+FINISH:
+    move_to_outbox
+START:
+    move_from_inbox
+    jump_if_negative_to A_IS_NEGATIVE
+A_IS_POSITIVE:
+    move_from_inbox
+    jump_if_negative_to DIFFERENT
+    jump_to SAME
+A_IS_NEGATIVE:
+    move_from_inbox
+    jump_if_negative_to SAME
+DIFFERENT:
+    copy_from [5]
+    jump_to FINISH
+
+
+# inbox: -2, -8, 3, -5, -3, 7, 4, 3
+# expected outbox: 0, 1, 1, 0
+
+# Floor tile [4] holds the value 0
+# Floor tile [5] holds the value 1

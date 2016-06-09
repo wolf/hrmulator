@@ -105,9 +105,12 @@ class Computer:
 def main():
     computer = Computer()
     computer.inbox = [
-        3, 2, -7, -2, 1, 1, -9, 2
+        -2, -8, 3, -5, -3, 7, 4, 3
     ]
-    computer.print_run_program('programs/Maximization_Room_speed.hrm')
+    computer.memory[4] = 0
+    computer.memory[5] = 1
+
+    computer.print_run_program('programs/Exclusive_Lounge.hrm')
 
 if __name__ == '__main__':
     main()
