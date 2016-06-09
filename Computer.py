@@ -29,10 +29,12 @@ class Computer:
         self.accumulator = None
         self.memory = {}
         self.break_points = {}
+        self.program_path = None
 
     def load_program(self, path):
         asm = Assembler()
         self.program = asm.assemble_program(path)
+        self.program_path = path
         self.break_points = {}
 
     def dump_program(self, path):
@@ -48,7 +50,7 @@ class Computer:
                 i,
                 instruction))
 
-    def run_program(self):
+    def run(self):
         self.program_counter = 0
         self.total_steps_executed = 0
         try:
@@ -57,6 +59,31 @@ class Computer:
         except InboxIsEmptyError:
             pass
         self.program_counter = None
+
+    def print_run_program(self, program_path=None):
+        if program_path is not None:
+            self.load_program(program_path)
+
+        print(self.program_path)
+        print()
+        self.print_program()
+        print()
+
+        printable_inbox = self.inbox[:]
+
+        self.run()
+
+        print("Inbox:")
+        print(printable_inbox)
+        print("Outbox:")
+        printable_outbox = self.outbox[::-1]
+        print(printable_outbox)
+        print()
+        print("Program size: {}; Total steps executed: {}".format(
+            len(self.program),
+            self.total_steps_executed
+        ))
+
 
     def is_running(self):
         return (self.program_counter is not None and
@@ -80,26 +107,7 @@ def main():
     computer.inbox = [
         3, 2, -7, -2, 1, 1, -9, 2
     ]
-
-    printable_inbox = computer.inbox[:]
-
-    print()
-    computer.load_program('programs/Maximization_Room_speed.hrm')
-    computer.print_program()
-    print()
-
-    computer.run_program()
-
-    print("Inbox:")
-    print(printable_inbox)
-    print("Outbox:")
-    printable_outbox = computer.outbox[::-1]
-    print(printable_outbox)
-    print()
-    print("Program size: {}; Total steps executed: {}".format(
-        len(computer.program),
-        computer.total_steps_executed
-    ))
+    computer.print_run_program('programs/Maximization_Room_speed.hrm')
 
 if __name__ == '__main__':
     main()
