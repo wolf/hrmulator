@@ -60,9 +60,11 @@ class Computer:
             pass
         self.program_counter = None
 
-    def print_run_program(self, program_path=None):
+    def print_run_program(self, program_path=None, inbox=None):
         if program_path is not None:
             self.load_program(program_path)
+        if inbox is not None:
+            self.inbox = inbox
 
         print(self.program_path)
         print()
@@ -104,13 +106,9 @@ class Computer:
 
 def main():
     computer = Computer()
-    computer.inbox = [
-        -2, -8, 3, -5, -3, 7, 4, 3
-    ]
-    computer.memory[4] = 0
-    computer.memory[5] = 1
-
-    computer.print_run_program('programs/Exclusive_Lounge.hrm')
+    computer.print_run_program(
+        'programs/Multiplication_Workshop.hrm',
+        inbox=[3, 5, 0, 6])
 
 if __name__ == '__main__':
     main()
