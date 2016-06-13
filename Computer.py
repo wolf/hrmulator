@@ -102,13 +102,3 @@ class Computer:
     def assertMemoryTileIsNotEmpty(self, tile_index):
         if self.memory.get(tile_index, None) is None:
             raise MemoryTileIsEmptyError()
-
-
-def main():
-    computer = Computer()
-    computer.print_run_program(
-        'programs/Multiplication_Workshop.hrm',
-        inbox=[3, 5, 0, 6])
-
-if __name__ == '__main__':
-    main()
