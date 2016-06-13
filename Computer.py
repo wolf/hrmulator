@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from Assembler import Assembler
+from .Assembler import Assembler
 
 
 class ComputerError(Exception):

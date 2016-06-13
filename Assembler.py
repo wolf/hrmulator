@@ -1,6 +1,6 @@
 import re
 
-from Instructions import InstructionCatalog
+from .Instructions import InstructionCatalog
 
 
 class Assembler:
