@@ -10,12 +10,13 @@ As I was playing Human Resource Machine, and the problems started getting larger
 
 HRMulator is simply a tool to help you play with Human Resource Machine programs in textual form, so you can apply source code control tools.  It's no good to you if you're not playing this game.  Go buy the game.  Tomorrow Corporation, please don't sue me.
 
-These tools are really rough, but improving with time.  Simple program to copy from the inbox to the outbox looks like this:
+These tools are really rough, but improving with time.  A simple program to copy from the inbox to the outbox looks like this:
 
 ~~~~~~~~
 START:
-    copy_from_inbox
-    copy_to_outbox
+    move_from_inbox
+    move_to_outbox
     jump_to START
 ~~~~~~~~
 
+If you saved that to a file named `simple_copy.hrm` you could then
