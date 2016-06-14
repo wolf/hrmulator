@@ -12,7 +12,7 @@ HRMulator is simply a tool to help you play with Human Resource Machine programs
 
 These tools are really rough, but improving with time.  A simple program to copy from the inbox to the outbox looks like this:
 
-~~~
+~~~Assembly
 START:
     move_from_inbox
     move_to_outbox
@@ -21,7 +21,7 @@ START:
 
 If you saved that to a file named `simple_copy.hrm` you could then
 
-~~~python
+~~~Python
 from HRMulator import Computer
 
 computer = Computer()
@@ -33,7 +33,7 @@ computer.print_run_program('simple_copy.hrm')
 
 The output would be:
 
-~~~
+~~~console
 simple_copy.hrm
 
   000: move_from_inbox
