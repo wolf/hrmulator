@@ -12,11 +12,38 @@ HRMulator is simply a tool to help you play with Human Resource Machine programs
 
 These tools are really rough, but improving with time.  A simple program to copy from the inbox to the outbox looks like this:
 
-~~~~~~~~
+~~~
 START:
     move_from_inbox
     move_to_outbox
     jump_to START
-~~~~~~~~
+~~~
 
 If you saved that to a file named `simple_copy.hrm` you could then
+
+~~~python
+from HRMulator import Computer
+
+computer = Computer()
+computer.inbox = [1, 2, 3, 4, 5, 6, 7]
+computer.memory[0] = 0
+computer.memory[1] = 1
+computer.print_run_program('simple_copy.hrm')
+~~~
+
+The output would be:
+
+~~~
+\simple_copy.hrm
+
+  000: move_from_inbox
+  001: move_to_outbox
+  002: jump_to 000
+
+Inbox:
+[1, 2, 3, 4, 5, 6, 7]
+Outbox:
+[1, 2, 3, 4, 5, 6, 7]
+
+Program size: 3; Total steps executed: 21
+~~~
