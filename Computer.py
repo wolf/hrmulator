@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+from collections import defaultdict
 from .Assembler import Assembler
 
 
@@ -33,7 +34,7 @@ class Computer:
 
     def load_program(self, path):
         asm = Assembler()
-        self.program = asm.assemble_program(path)
+        self.program, self.jump_table = asm.assemble_program(path)
         self.program_path = path
         self.break_points = {}
 
@@ -43,7 +44,14 @@ class Computer:
                 outfile.write("{}\n".format(instruction))
 
     def print_program(self):
+        labels = defaultdict(list)
+        for label in self.jump_table:
+            labels[self.jump_table[label]].append(label)
+
         for i, instruction in enumerate(self.program):
+            if i in labels:
+                for label in labels[i]:
+                    print('{}:'.format(label))
             print("{}{}{:03d}: {}".format(
                 '*' if self.break_points.get(i, False) else ' ',
                 '@' if i == self.program_counter else ' ',

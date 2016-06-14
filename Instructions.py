@@ -169,13 +169,23 @@ class Jump(AbstractInstruction):
     has_argument = True
 
     def __str__(self):
-        return "{} {:03d}".format(self.token, self.destination_pc)
+        try:
+            result = "{} {:03d}".format(self.token, self.destination_pc)
+        except ValueError:
+            result = "{} {}".format(self.token, self.destination_pc)
+        return result
 
     def __init__(self, destination_pc):
         self.destination_pc = destination_pc
 
+    def lookup_destination(self, computer):
+        result = self.destination_pc
+        if result in computer.jump_table:
+            result = computer.jump_table[result]
+        return result
+
     def execute(self, computer):
-        computer.program_counter = self.destination_pc
+        computer.program_counter = self.lookup_destination(computer)
         computer.total_steps_executed += 1
 
 
@@ -188,7 +198,7 @@ class JumpIfZero(Jump):
     def execute(self, computer):
         computer.assertAccumulatorIsNotEmpty()
         if computer.accumulator == 0:
-            computer.program_counter = self.destination_pc
+            computer.program_counter = self.lookup_destination(computer)
         else:
             computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -207,7 +217,7 @@ class JumpIfNegative(Jump):
     def execute(self, computer):
         computer.assertAccumulatorIsNotEmpty()
         if computer.accumulator < 0:
-            computer.program_counter = self.destination_pc
+            computer.program_counter = self.lookup_destination(computer)
         else:
             computer.program_counter += 1
         computer.total_steps_executed += 1

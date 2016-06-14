@@ -39,14 +39,4 @@ class Assembler:
                     program.append(instruction)
                     step += 1
 
-        # now let's step through the program and fixup all the symbolic jumps
-        for instruction in program:
-            target = getattr(instruction, 'destination_pc', None)
-            if target is not None:
-                if target in jump_table:
-                    target = jump_table[target]
-                else:
-                    target = int(target)
-                setattr(instruction, 'destination_pc', target)
-
-        return program
+        return (program, jump_table)
