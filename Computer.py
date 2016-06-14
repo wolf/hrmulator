@@ -86,7 +86,6 @@ class Computer:
             self.total_steps_executed
         ))
 
-
     def is_running(self):
         return (self.program_counter is not None and
                 0 <= self.program_counter < len(self.program))
