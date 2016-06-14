@@ -34,7 +34,7 @@ computer.print_run_program('simple_copy.hrm')
 The output would be:
 
 ~~~
-\simple_copy.hrm
+simple_copy.hrm
 
   000: move_from_inbox
   001: move_to_outbox
