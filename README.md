@@ -45,3 +45,19 @@ Outbox:
 
 Program size: 3; Total steps executed: 21
 ~~~
+
+You can simplify the world a little by putting `simple_copy`s code right in your Python file:
+
+~~~Python
+from HRMulator import Computer
+
+simple_copy = """
+START:
+    move_from_inbox
+    move_to_outbox
+    jump_to START
+"""
+
+computer = Computer()
+computer.print_run_program(program_text=simple_copy, inbox=[1, 2, 3, 4, 5, 6, 7])
+~~~
