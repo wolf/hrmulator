@@ -36,10 +36,14 @@ class Computer:
     def set_inbox(self, inbox):
         self.inbox = deque(inbox)
 
-    def load_program(self, path):
+    def load_program(self, program_path=None, program_text=None):
         asm = Assembler()
-        self.program, self.jump_table = asm.assemble_program(path)
-        self.program_path = path
+        if program_text is not None:
+            self.program, self.jump_table = asm.assemble_program_text(program_text)
+            self.program_path = 'inline'
+        elif program_path is not None:
+            self.program, self.jump_table = asm.assemble_program_file(program_path)
+            self.program_path = program_path
         self.break_points = {}
 
     def print_program(self):
@@ -72,9 +76,9 @@ class Computer:
             pass
         self.program_counter = None
 
-    def print_run_program(self, program_path=None, inbox=None):
-        if program_path is not None:
-            self.load_program(program_path)
+    def print_run_program(self, program_path=None, program_text=None, inbox=None):
+        if program_path is not None or program_text is not None:
+            self.load_program(program_path=program_path, program_text=program_text)
         if inbox is not None:
             self.set_inbox(inbox)
         self.outbox = []

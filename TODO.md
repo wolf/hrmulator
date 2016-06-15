@@ -2,7 +2,7 @@ TO DO:
 
 - more docstrings
 - tests
-- load program from a string
+x load program from a string
 - "job control" --> supply in a program the inbox, the expected outbox, run it - like a test
 - clean up assembler
 - keep symbols around,
