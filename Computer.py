@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-from collections import defaultdict
+from collections import defaultdict, deque
 from .Assembler import Assembler
 
 
@@ -22,15 +22,19 @@ class MemoryTileIsEmptyError(ComputerError):
 
 class Computer:
     def __init__(self):
-        self.inbox = []
-        self.outbox = []
         self.program_counter = None
         self.total_steps_executed = None
-        self.program = []
         self.accumulator = None
         self.memory = {}
         self.break_points = {}
         self.program_path = None
+        self.program = None
+        self.jump_table = None
+        self.inbox = None
+        self.outbox = None
+
+    def set_inbox(self, inbox):
+        self.inbox = deque(inbox)
 
     def load_program(self, path):
         asm = Assembler()
@@ -72,22 +76,22 @@ class Computer:
         if program_path is not None:
             self.load_program(program_path)
         if inbox is not None:
-            self.inbox = inbox
+            self.set_inbox(inbox)
+        self.outbox = []
 
         print(self.program_path)
         print()
         self.print_program()
         print()
 
-        printable_inbox = self.inbox[:]
+        printable_inbox = list(self.inbox)
 
         self.run()
 
         print("Inbox:")
         print(printable_inbox)
         print("Outbox:")
-        printable_outbox = self.outbox[::-1]
-        print(printable_outbox)
+        print(self.outbox)
         print()
         print("Program size: {}; Total steps executed: {}".format(
             len(self.program),

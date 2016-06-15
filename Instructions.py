@@ -61,7 +61,7 @@ class MoveFromInbox(AbstractInstruction):
 
     def execute(self, computer):
         computer.assertInboxIsNotEmpty()
-        computer.accumulator = computer.inbox.pop()
+        computer.accumulator = computer.inbox.popleft()
         computer.program_counter += 1
         computer.total_steps_executed += 1
 

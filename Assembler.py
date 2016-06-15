@@ -1,5 +1,6 @@
 import re
 
+from collections import OrderedDict
 from .Instructions import InstructionCatalog
 
 
@@ -13,7 +14,7 @@ class Assembler:
             '\s*([a-zA-Z_]+)(?:\s+\[?([0-9]+|[A-Z_]+)\]?)?(?:\s+#.*)?\s*\n?'
         )
         program = []
-        jump_table = {}
+        jump_table = OrderedDict()
         step = 0
         with open(path, 'r') as infile:
             for line in infile:
