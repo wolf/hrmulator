@@ -16,9 +16,8 @@ class Assembler:
         program = []
 
         jump_table = OrderedDict()
-            # using an OrderedDict here means the labels will come out in the
-            # right order, where there were multiple jump labels at the same
-            # spot ... when I print the program later
+            # using an OrderedDict here makes the labels print in the right
+            # order when there are multiple labels at the same point
 
         step = 0
         with open(path, 'r') as infile:

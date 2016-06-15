@@ -43,14 +43,19 @@ class Computer:
         self.break_points = {}
 
     def print_program(self):
+        # invert the jump table, so I can see where to print the labels
         labels = defaultdict(list)
         for label in self.jump_table:
             labels[self.jump_table[label]].append(label)
 
+        # now step through the actual program: at each step...
         for i, instruction in enumerate(self.program):
+            # print any labels that lead to this step;
             if i in labels:
                 for label in labels[i]:
                     print('{}:'.format(label))
+            # then print the step number and the instruction at that step
+            # (include markers for breakpoints and noting the current step)
             print("{}{}{:03d}: {}".format(
                 '*' if self.break_points.get(i, False) else ' ',
                 '@' if i == self.program_counter else ' ',
@@ -80,6 +85,8 @@ class Computer:
         print()
 
         printable_inbox = list(self.inbox)
+            # copy our inbox, a deque, into a list; because
+            # the deque will be consumed before we are ready to print
 
         self.run()
 
