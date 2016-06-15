@@ -25,10 +25,7 @@ If you saved that to a file named `simple_copy.hrm` you could then
 from HRMulator import Computer
 
 computer = Computer()
-computer.inbox = [1, 2, 3, 4, 5, 6, 7]
-computer.memory[0] = 0
-computer.memory[1] = 1
-computer.print_run_program('simple_copy.hrm')
+computer.print_run_program('simple_copy.hrm', inbox=[1, 2, 3, 4, 5, 6, 7])
 ~~~
 
 The output would be:
@@ -36,9 +33,10 @@ The output would be:
 ~~~console
 simple_copy.hrm
 
+START:
   000: move_from_inbox
   001: move_to_outbox
-  002: jump_to 000
+  002: jump_to START
 
 Inbox:
 [1, 2, 3, 4, 5, 6, 7]
