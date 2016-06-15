@@ -42,11 +42,6 @@ class Computer:
         self.program_path = path
         self.break_points = {}
 
-    def dump_program(self, path):
-        with open(path, 'w+') as outfile:
-            for instruction in self.program:
-                outfile.write("{}\n".format(instruction))
-
     def print_program(self):
         labels = defaultdict(list)
         for label in self.jump_table:
