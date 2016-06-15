@@ -14,7 +14,12 @@ class Assembler:
             '\s*([a-zA-Z_]+)(?:\s+\[?([0-9]+|[A-Z_]+)\]?)?(?:\s+#.*)?\s*\n?'
         )
         program = []
+
         jump_table = OrderedDict()
+            # using an OrderedDict here means the labels will come out in the
+            # right order, where there were multiple jump labels at the same
+            # spot ... when I print the program later
+
         step = 0
         with open(path, 'r') as infile:
             for line in infile:
