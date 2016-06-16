@@ -37,10 +37,17 @@ class SyntaxError(AssemblerError):
 class Assembler:
 
     comment_re = re.compile('(.*)#.*')
-    label_re = re.compile('^(\w+):')
-    tile_instruction_re = re.compile('^(\w+)\s+\[(\w+)\]')
-    jump_instruction_re = re.compile('^(\w+)\s+(\w+)')
-    instruction_re = re.compile('^(\w+)')
+        # keep anything to the left of the comment marker
+
+    label_re = re.compile('(\w+):')
+    tile_instruction_re = re.compile('(\w+)\s+\[(\w+)\]$')
+        # [] required around tile index.  Why?  Because I like them.
+        # Note tile index is made of word characters not necessarily digits.
+
+    jump_instruction_re = re.compile('(\w+)\s+(\w+)$')
+        # Note destination is made of word characters not necessarily digits.
+
+    instruction_re = re.compile('(\w+)$')
 
     def __init__(self):
         self.symbolCatalog = {ins.token: ins for ins in InstructionCatalog}
