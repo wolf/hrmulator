@@ -120,5 +120,5 @@ class Computer:
             raise AccumulatorIsEmptyError()
 
     def assertMemoryTileIsNotEmpty(self, tile_index):
-        if self.memory.get(tile_index, None) is None:
+        if self.memory[tile_index] is None:
             raise MemoryTileIsEmptyError()
