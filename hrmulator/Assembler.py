@@ -20,7 +20,7 @@ class Assembler:
     def assemble_program(self, lines):
         label_re = re.compile('([A-Z_]+):\s*\n?')
         statement_re = re.compile(
-            '\s*([a-zA-Z_]+)(?:\s+\[?([0-9]+|[A-Z_]+)\]?)?(?:\s+#.*)?\s*\n?'
+            '\s*([a-zA-Z_]+)(?:\s+\[?([0-9]+|[A-Za-z_]+)\]?)?(?:\s+#.*)?\s*\n?'
         )
         program = []
 

@@ -2,6 +2,7 @@ from __future__ import print_function
 
 from collections import defaultdict, deque
 from .Assembler import Assembler
+from .Memory import Memory
 
 
 class ComputerError(Exception):
@@ -25,7 +26,7 @@ class Computer:
         self.program_counter = None
         self.total_steps_executed = None
         self.accumulator = None
-        self.memory = {}
+        self.memory = Memory()
         self.break_points = {}
         self.program_path = None
         self.program = None
@@ -76,11 +77,13 @@ class Computer:
             pass
         self.program_counter = None
 
-    def print_run_program(self, program_path=None, program_text=None, inbox=None):
+    def print_run_program(self, program_path=None, program_text=None, inbox=None, memory=None):
         if program_path is not None or program_text is not None:
             self.load_program(program_path=program_path, program_text=program_text)
         if inbox is not None:
             self.set_inbox(inbox)
+        if memory is not None:
+            self.memory = memory
         self.outbox = []
 
         print(self.program_path)
