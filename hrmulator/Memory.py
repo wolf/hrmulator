@@ -1,7 +1,7 @@
 class Memory:
 
     def __init__(self, labels=None, values=None):
-        self.label_map = {} if labels is None else {k: v for k, v in labels.items()}
+        self.label_map = {} if labels is None else labels.copy()
         self.tiles = {}
         if values is not None:
             for k, v in values.items():
