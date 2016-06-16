@@ -5,19 +5,33 @@ from .Instructions import InstructionCatalog
 
 
 class AssemblerError(Exception):
-    pass
+
+    def __init__(self, line_number, text):
+        self.line_number = line_number
+        self.text = text
+
+    def __str__(self):
+        return '{}, line {}: "{}"'.format(
+            self.description,
+            self.line_number,
+            self.text
+        )
 
 
 class ArgumentRequiredError(AssemblerError):
-    pass
+    description = 'Instruction requires argument'
 
 
-class UnknownSymbolError(AssemblerError):
-    pass
+class UnexpectedArgumentError(AssemblerError):
+    description = 'Unexpected argument'
+
+
+class UnknownInstructionError(AssemblerError):
+    description = 'Unknown instruction'
 
 
 class SyntaxError(AssemblerError):
-    pass
+    description = 'Syntax error'
 
 
 class Assembler:
@@ -48,7 +62,10 @@ class Assembler:
             # order when there are multiple labels at the same point
 
         step = 0
+        line_number = 0
         for line in lines:
+            line_number += 1
+
             # strip off the comment, if any
             match = re.match(self.comment_re, line)
             if match is not None:
@@ -85,21 +102,23 @@ class Assembler:
                 try:
                     klass = self.symbolCatalog[match.group(1).lower()]
                 except KeyError:
-                    raise UnknownSymbolError()
+                    raise UnknownInstructionError(line_number, match.group(1))
 
                 if klass.has_argument:
                     if arg is None:
-                        raise ArgumentRequiredError()
+                        raise ArgumentRequiredError(line_number, line)
                     try:
                         arg = int(arg)
                     except ValueError:
                         pass
                     instruction = klass(arg)
+                elif arg is not None:
+                    raise UnexpectedArgumentError(line_number, arg)
                 else:
                     instruction = klass()
                 program.append(instruction)
                 step += 1
             else:
-                raise SyntaxError()
+                raise SyntaxError(line_number, line)
 
         return (program, jump_table)
