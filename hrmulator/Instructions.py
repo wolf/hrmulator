@@ -1,3 +1,6 @@
+import colorama
+import termcolor
+
 """
 These are the individual instructions which the Computer can execute.  They
 have intimate knowledge of the computer and do things like directly update the
@@ -33,6 +36,9 @@ class AbstractInstruction:
 
     def __str__(self):
         return self.token
+
+    def colored_str(self):
+        return self.__str__()
 
 
 class NoOp(AbstractInstruction):
@@ -82,6 +88,10 @@ class AbstractTileInstruction(AbstractInstruction):
 
     def __str__(self):
         return "{} [{}]".format(self.token, self.tile_index)
+
+    def colored_str(self):
+        tile_str = termcolor.colored(str(self.tile_index), 'blue')
+        return "{} [{}]".format(self.token, tile_str)
 
     def __init__(self, tile_index):
         self.tile_index = tile_index
@@ -172,7 +182,12 @@ class Jump(AbstractInstruction):
         try:
             result = "{} {:03d}".format(self.token, self.destination_pc)
         except ValueError:
-            result = "{} {}".format(self.token, self.destination_pc)
+            result = "{} {}{}{}".format(
+                self.token,
+                colorama.Fore.GREEN,
+                self.destination_pc,
+                colorama.Style.RESET_ALL
+            )
         return result
 
     def __init__(self, destination_pc):

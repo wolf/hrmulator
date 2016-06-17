@@ -1,6 +1,10 @@
 from __future__ import print_function
 
 from collections import defaultdict, deque
+
+import colorama
+import termcolor
+
 from .Assembler import Assembler
 from .Memory import Memory
 
@@ -58,14 +62,20 @@ class Computer:
             # print any labels that lead to this step;
             if i in labels:
                 for label in labels[i]:
-                    print('{}:'.format(label))
+                    print('{}{}{}:'.format(
+                        colorama.Fore.GREEN,
+                        label,
+                        colorama.Style.RESET_ALL
+                    ))
             # then print the step number and the instruction at that step
             # (include markers for breakpoints and noting the current step)
-            print("{}{}{:03d}: {}".format(
+            print("{}{}{}{:03d}:{} {}".format(
                 '*' if self.break_points.get(i, False) else ' ',
                 '@' if i == self.program_counter else ' ',
+                colorama.Style.DIM,
                 i,
-                instruction))
+                colorama.Style.RESET_ALL,
+                instruction.colored_str()))
 
     def run(self):
         self.program_counter = 0

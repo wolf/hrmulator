@@ -14,6 +14,10 @@ setup(name='hrmulator',
       author_email='Wolf@zv.cx',
       license='MIT',
       packages=['hrmulator'],
+      install_requires=[
+        'colorama',
+        'termcolor',
+      ],
       test_suite='nose.collector',
       tests_require=['nose'],
       zip_safe=False)
