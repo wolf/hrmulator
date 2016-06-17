@@ -14,22 +14,7 @@ import termcolor
 
 from .Assembler import Assembler
 from .Memory import Memory
-
-
-class ComputerError(Exception):
-    pass
-
-
-class InboxIsEmptyError(ComputerError):
-    pass
-
-
-class AccumulatorIsEmptyError(ComputerError):
-    pass
-
-
-class MemoryTileIsEmptyError(ComputerError):
-    pass
+from .Instructions import InboxIsEmptyError
 
 
 class Computer:
@@ -120,15 +105,3 @@ class Computer:
             len(self.program),
             self.total_steps_executed
         ))
-
-    def assertInboxIsNotEmpty(self):
-        if not len(self.inbox):
-            raise InboxIsEmptyError()
-
-    def assertAccumulatorIsNotEmpty(self):
-        if self.accumulator is None:
-            raise AccumulatorIsEmptyError()
-
-    def assertMemoryTileIsNotEmpty(self, tile_index):
-        if self.memory[tile_index] is None:
-            raise MemoryTileIsEmptyError()

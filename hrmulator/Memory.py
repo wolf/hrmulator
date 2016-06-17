@@ -33,6 +33,14 @@ You can put initial values onto the tiles as well:
 """
 
 
+class MemoryError(Exception):
+    pass
+
+
+class MemoryTileIsEmptyError(MemoryError):
+    pass
+
+
 class Memory:
 
     def __init__(self, labels=None, values=None):
@@ -51,8 +59,13 @@ class Memory:
         self.label_map[label] = k
 
     def __getitem__(self, i):
-        k = self.label_map.get(i, i)
-        return self.tiles.get(k, None)
+        key = self.label_map.get(i, i)
+        if type(key) is not int:
+            raise KeyError(key)
+        value = self.tiles.get(key, None)
+        if value is None:
+            raise MemoryTileIsEmptyError(i)
+        return value
 
     def __setitem__(self, i, value):
         k = self.label_map.get(i, i)

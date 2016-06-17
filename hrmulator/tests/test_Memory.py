@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 import hrmulator
+from hrmulator.Memory import MemoryTileIsEmptyError
 
 
 class TestMemory(TestCase):
@@ -9,7 +10,8 @@ class TestMemory(TestCase):
         self.memory = hrmulator.Memory()
 
     def test_memory_empty_lookup(self):
-        self.assertIsNone(self.memory[0])
+        with self.assertRaises(MemoryTileIsEmptyError):
+            value = self.memory[0]
 
     def test_memory_set_and_get(self):
         self.memory[0] = 74
@@ -17,7 +19,8 @@ class TestMemory(TestCase):
 
     def test_memory_apply_label(self):
         self.memory.label_tile(0, 'hello')
-        self.assertIsNone(self.memory['hello'])
+        with self.assertRaises(MemoryTileIsEmptyError):
+            value = self.memory['hello']
 
     def test_memory_label_is_connected(self):
         self.memory.label_tile(0, 'hello')
