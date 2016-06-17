@@ -1,3 +1,10 @@
+"""
+A very simple computer that executes programs assembled from instances of the
+instructions implemented in Instructions.py.  Running such programs is easy,
+the trouble we go to is in printing everything (and using a little color).
+"""
+
+
 from __future__ import print_function
 
 from collections import defaultdict, deque
@@ -31,7 +38,6 @@ class Computer:
         self.total_steps_executed = None
         self.accumulator = None
         self.memory = Memory()
-        self.break_points = {}
         self.program_path = None
         self.program = None
         self.jump_table = None
@@ -49,7 +55,6 @@ class Computer:
         elif program_path is not None:
             self.program, self.jump_table = asm.assemble_program_file(program_path)
             self.program_path = program_path
-        self.break_points = {}
 
     def print_program(self):
         # invert the jump table, so I can see where to print the labels
@@ -68,9 +73,8 @@ class Computer:
                         colorama.Style.RESET_ALL
                     ))
             # then print the step number and the instruction at that step
-            # (include markers for breakpoints and noting the current step)
-            print("{}{}{}{:03d}:{} {}".format(
-                '*' if self.break_points.get(i, False) else ' ',
+            # (include markers for and noting the current step)
+            print(" {}{}{:03d}:{} {}".format(
                 '@' if i == self.program_counter else ' ',
                 colorama.Style.DIM,
                 i,
@@ -116,10 +120,6 @@ class Computer:
             len(self.program),
             self.total_steps_executed
         ))
-
-    def is_running(self):
-        return (self.program_counter is not None and
-                0 <= self.program_counter < len(self.program))
 
     def assertInboxIsNotEmpty(self):
         if not len(self.inbox):

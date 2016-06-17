@@ -5,7 +5,6 @@ from .Instructions import InstructionCatalog
 
 
 class AssemblerError(Exception):
-
     def __init__(self, line_number, text):
         self.line_number = line_number
         self.text = text
