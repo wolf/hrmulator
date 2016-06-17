@@ -57,6 +57,10 @@ class AbstractInstruction:
     def colored_str(self):
         return self.__str__()
 
+    def assertAccumulatorIsNotEmpty(self, computer):
+        if computer.accumulator is None:
+            raise AccumulatorIsEmptyError()
+
 
 class NoOp(AbstractInstruction):
     """
@@ -94,8 +98,7 @@ class MoveToOutbox(AbstractInstruction):
     token = "move_to_outbox"
 
     def execute(self, computer):
-        if computer.accumulator is None:
-            raise AccumulatorIsEmptyError()
+        self.assertAccumulatorIsNotEmpty(computer)
         computer.outbox.append(computer.accumulator)
         computer.accumulator = None
         computer.program_counter += 1
@@ -129,8 +132,7 @@ class CopyTo(AbstractTileInstruction):
     token = "copy_to"
 
     def execute(self, computer):
-        if computer.accumulator is None:
-            raise AccumulatorIsEmptyError()
+        self.assertAccumulatorIsNotEmpty(computer)
         computer.memory[self.tile_index] = computer.accumulator
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -140,6 +142,7 @@ class Add(AbstractTileInstruction):
     token = "add"
 
     def execute(self, computer):
+        self.assertAccumulatorIsNotEmpty(computer)
         computer.accumulator += computer.memory[self.tile_index]
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -149,6 +152,7 @@ class Subtract(AbstractTileInstruction):
     token = "subtract"
 
     def execute(self, computer):
+        self.assertAccumulatorIsNotEmpty(computer)
         computer.accumulator -= computer.memory[self.tile_index]
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -222,8 +226,7 @@ class JumpIfZero(Jump):
     token = "jump_if_zero_to"
 
     def execute(self, computer):
-        if computer.accumulator is None:
-            raise AccumulatorIsEmptyError()
+        self.assertAccumulatorIsNotEmpty(computer)
         if computer.accumulator == 0:
             computer.program_counter = self.lookup_destination(computer)
         else:
@@ -242,8 +245,7 @@ class JumpIfNegative(Jump):
     token = "jump_if_negative_to"
 
     def execute(self, computer):
-        if computer.accumulator is None:
-            raise AccumulatorIsEmptyError()
+        self.assertAccumulatorIsNotEmpty(computer)
         if computer.accumulator < 0:
             computer.program_counter = self.lookup_destination(computer)
         else:
