@@ -54,23 +54,23 @@ class Memory:
             for k, v in values.items():
                 self.__setitem__(k, v) # ensures we resolve initial labels
 
-    def label_tile(self, i, label):
-        k = self.label_map.get(i, i)
-        self.label_map[label] = k
-
-    def __getitem__(self, i):
+    def resolve_key(self, i):
         key = self.label_map.get(i, i)
         if type(key) is not int:
             raise KeyError(key)
-        value = self.tiles.get(key, None)
+        return key
+
+    def label_tile(self, i, label):
+        self.label_map[label] = self.resolve_key(i)
+
+    def __getitem__(self, i):
+        value = self.tiles.get(self.resolve_key(i), None)
         if value is None:
             raise MemoryTileIsEmptyError(i)
         return value
 
     def __setitem__(self, i, value):
-        k = self.label_map.get(i, i)
-        self.tiles[k] = value
+        self.tiles[self.resolve_key(i)] = value
 
     def __delitem__(self, i):
-        k = self.label_map.get(i, i)
-        del self.tiles[k]
+        del self.tiles[self.resolve_key(i)]

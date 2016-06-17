@@ -13,6 +13,10 @@ class TestMemory(TestCase):
         with self.assertRaises(MemoryTileIsEmptyError):
             value = self.memory[0]
 
+    def test_memory_unknown_label(self):
+        with self.assertRaises(KeyError):
+            value = self.memory['hello']
+
     def test_memory_set_and_get(self):
         self.memory[0] = 74
         self.assertEqual(self.memory[0], 74)
