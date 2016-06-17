@@ -69,6 +69,7 @@ class Computer:
     def run(self):
         self.program_counter = 0
         self.total_steps_executed = 0
+        self.outbox = []
         try:
             while self.program_counter < len(self.program):
                 self.program[self.program_counter].execute(self)
@@ -83,7 +84,6 @@ class Computer:
             self.set_inbox(inbox)
         if memory is not None:
             self.memory = memory
-        self.outbox = []
 
         print(self.program_path)
         print()
