@@ -3,7 +3,7 @@ from unittest import TestCase
 from hrmulator import Computer
 
 
-countdown = """
+program_text = """
 START:
     move_from_inbox
     copy_to [0]
@@ -30,6 +30,6 @@ class TestIntegration002(TestCase):
     def test_countdown(self):
         computer = Computer()
         computer.set_inbox([3, -3, 0])
-        computer.load_program(program_text=countdown)
+        computer.load_program(program_text=program_text)
         computer.run()
         self.assertSequenceEqual(computer.outbox, [3, 2, 1, 0, -3, -2, -1, 0, 0])

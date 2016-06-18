@@ -3,7 +3,7 @@ from unittest import TestCase
 from hrmulator import Computer, Memory
 
 
-multiplication_workshop = """
+program_text = """
 START:
     move_from_inbox
     copy_to [A]
@@ -37,6 +37,6 @@ class TestIntegration000(TestCase):
         computer.memory = Memory(labels={'A':0, 'B':1, 'product':2, 'zero':9},
                                  values={'zero':0})
         computer.set_inbox([3, 2, 0, 7])
-        computer.load_program(program_text=multiplication_workshop)
+        computer.load_program(program_text=program_text)
         computer.run()
         self.assertSequenceEqual(computer.outbox, [6, 0])

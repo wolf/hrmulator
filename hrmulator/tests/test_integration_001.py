@@ -3,7 +3,7 @@ from unittest import TestCase
 from hrmulator import Computer, Memory
 
 
-exclusive_lounge = """
+program_text = """
     jump_to START
 SAME:
     copy_from [4]
@@ -29,6 +29,6 @@ class TestIntegration001(TestCase):
         computer = Computer()
         computer.memory = Memory(values={4:0, 5:1})
         computer.set_inbox([-2, -8, 3, -5, -3, 7, 4, 3])
-        computer.load_program(program_text=exclusive_lounge)
+        computer.load_program(program_text=program_text)
         computer.run()
         self.assertSequenceEqual(computer.outbox, [0, 1, 1, 0])
