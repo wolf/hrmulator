@@ -19,5 +19,8 @@ setup(name='hrmulator',
         'termcolor',
       ],
       test_suite='nose.collector',
-      tests_require=['nose'],
+      tests_require=[
+        'mock',
+        'nose',
+      ],
       zip_safe=False)

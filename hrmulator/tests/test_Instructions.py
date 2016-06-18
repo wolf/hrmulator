@@ -1,6 +1,9 @@
 from collections import deque
 from unittest import TestCase
-from unittest.mock import Mock
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 import hrmulator
 from hrmulator.Memory import Memory, MemoryTileIsEmptyError
