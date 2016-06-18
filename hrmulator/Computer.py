@@ -41,14 +41,24 @@ class Computer:
             self.program, self.jump_table = asm.assemble_program_file(program_path)
             self.program_path = program_path
 
-    def print_program(self):
+    def print_program(self, print_slice=None):
         # invert the jump table, so I can see where to print the labels
         labels = defaultdict(list)
         for label in self.jump_table:
             labels[self.jump_table[label]].append(label)
 
+        # You can print just a slice of the program, by specifying the slice.
+        # If you want to print just a single line of the program, provide
+        # a slice of size 1.
+        if type(print_slice) is slice:
+            program_chunk = self.program.__getitem__(print_slice)
+            offset = print_slice.start
+        else:
+            program_chunk = self.program
+            offset = 0
+
         # now step through the actual program: at each step...
-        for i, instruction in enumerate(self.program):
+        for i, instruction in enumerate(program_chunk, offset):
             # print any labels that lead to this step;
             if i in labels:
                 for label in labels[i]:
