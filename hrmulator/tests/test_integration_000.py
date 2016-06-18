@@ -33,10 +33,10 @@ OUTPUT:
 
 class TestIntegration000(TestCase):
     def test_multiplication_workshop(self):
-        self.computer = Computer()
-        self.computer.memory = Memory(labels={'A':0, 'B':1, 'product':2, 'zero':9},
-                                      values={'zero':0})
-        self.computer.set_inbox([3, 2, 0, 7])
-        self.computer.load_program(program_text=multiplication_workshop)
-        self.computer.run()
-        self.assertSequenceEqual(self.computer.outbox, [6, 0])
+        computer = Computer()
+        computer.memory = Memory(labels={'A':0, 'B':1, 'product':2, 'zero':9},
+                                 values={'zero':0})
+        computer.set_inbox([3, 2, 0, 7])
+        computer.load_program(program_text=multiplication_workshop)
+        computer.run()
+        self.assertSequenceEqual(computer.outbox, [6, 0])

@@ -8,13 +8,7 @@ your program can `copy_to [hello]` and it will do the same thing as
         memory['hello'] = 74
 
 Here, I implement the simplest thing that can reasonably work.  Note that I
-don't support slices at all (of course).  The magic incantation
-
-        k = self.label_map.get(i, i)
-
-means if `i` is a key in `label_map`, return the integer index value stored
-there.  Otherwise, `i` is already an integer, just use that as the key into
-the `tiles` dictionary.
+don't support slices at all (of course).
 
 You don't have to call `label_tile` individually for every label you wish to
 apply.  You can label them all at once by passing in a dictionary at
@@ -54,23 +48,23 @@ class Memory:
             for k, v in values.items():
                 self.__setitem__(k, v) # ensures we resolve initial labels
 
-    def resolve_key(self, i):
-        key = self.label_map.get(i, i)
+    def resolve_key(self, key):
+        key = self.label_map.get(key, key)
         if type(key) is not int:
             raise KeyError(key)
         return key
 
-    def label_tile(self, i, label):
-        self.label_map[label] = self.resolve_key(i)
+    def label_tile(self, key, label):
+        self.label_map[label] = self.resolve_key(key)
 
-    def __getitem__(self, i):
-        value = self.tiles.get(self.resolve_key(i), None)
+    def __getitem__(self, key):
+        value = self.tiles.get(self.resolve_key(key), None)
         if value is None:
-            raise MemoryTileIsEmptyError(i)
+            raise MemoryTileIsEmptyError(key)
         return value
 
-    def __setitem__(self, i, value):
-        self.tiles[self.resolve_key(i)] = value
+    def __setitem__(self, key, value):
+        self.tiles[self.resolve_key(key)] = value
 
-    def __delitem__(self, i):
-        del self.tiles[self.resolve_key(i)]
+    def __delitem__(self, key):
+        del self.tiles[self.resolve_key(key)]

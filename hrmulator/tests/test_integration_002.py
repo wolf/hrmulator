@@ -28,8 +28,8 @@ FINISH:
 
 class TestIntegration002(TestCase):
     def test_countdown(self):
-        self.computer = Computer()
-        self.computer.set_inbox([3, -3, 0])
-        self.computer.load_program(program_text=countdown)
-        self.computer.run()
-        self.assertSequenceEqual(self.computer.outbox, [3, 2, 1, 0, -3, -2, -1, 0, 0])
+        computer = Computer()
+        computer.set_inbox([3, -3, 0])
+        computer.load_program(program_text=countdown)
+        computer.run()
+        self.assertSequenceEqual(computer.outbox, [3, 2, 1, 0, -3, -2, -1, 0, 0])

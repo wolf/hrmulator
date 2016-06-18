@@ -26,9 +26,9 @@ DIFFERENT:
 
 class TestIntegration001(TestCase):
     def test_exclusive_lounge(self):
-        self.computer = Computer()
-        self.computer.memory = Memory(values={4:0, 5:1})
-        self.computer.set_inbox([-2, -8, 3, -5, -3, 7, 4, 3])
-        self.computer.load_program(program_text=exclusive_lounge)
-        self.computer.run()
-        self.assertSequenceEqual(self.computer.outbox, [0, 1, 1, 0])
+        computer = Computer()
+        computer.memory = Memory(values={4:0, 5:1})
+        computer.set_inbox([-2, -8, 3, -5, -3, 7, 4, 3])
+        computer.load_program(program_text=exclusive_lounge)
+        computer.run()
+        self.assertSequenceEqual(computer.outbox, [0, 1, 1, 0])
