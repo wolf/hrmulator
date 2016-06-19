@@ -72,3 +72,52 @@ python setup.py install
 ~~~
 
 ...from that point forward, `hrmulator` is available for import wherever you are working, including into `iPython`.  If you're thinking of working on `hrmulator` itself, consider saying `python setup.py develop` instead as that install symlinks that lead back to your clone.
+
+### The Instruction Set
+
+~~~
+no_op
+move_from_inbox
+move_to_outbox
+copy_from [tile]
+copy_to [tile]
+add [tile]
+subtract [tile]
+bump_up [tile]
+bump_down [tile]
+jump_to place
+jump_if_zero_to place
+jump_if_negative_to place
+~~~
+
+`[tile]` may be a number (like `[5]`) or a label (like `[hello]`) you applied to one of the numbered tiles.  `place` may be a step number (like `12`) or a label you inserted into the program (like `START`).  Here's an example using both memory and place labels:
+
+~~~Python
+from hrmulator import Computer, Memory
+
+
+program_text = """
+START:
+    copy_from [zero]
+    copy_to [sum]
+ADD:
+    move_from_inbox
+    jump_if_zero_to DONE
+    add [sum]
+    copy_to [sum]
+    jump_to ADD
+DONE:
+    copy_from [sum]
+    move_to_outbox
+    jump_to START
+"""
+
+
+c = Computer()
+c.print_run_program(
+    program_text=program_text,
+    inbox=[2, 4, 0, 0, 4, 0],
+    memory=Memory(labels={'sum':0, 'zero':5}, values={'zero':0})
+)
+assert(c.outbox == [6, 0, 4])
+~~~
