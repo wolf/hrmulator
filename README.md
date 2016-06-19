@@ -121,3 +121,34 @@ c.print_run_program(
 )
 assert(c.outbox == [6, 0, 4])
 ~~~
+
+You can actually do it all within the `print_run_program` call:
+
+~~~Python
+import hrmulator
+
+
+c = hrmulator.Computer()
+c.print_run_program(
+    memory=hrmulator.Memory(
+        labels={'sum':0, 'zero':5},
+        values={'zero':0}
+    ),
+    inbox=[2, 4, 0, 0, 4, 0],
+    program_text="""
+        START:
+            copy_from [zero]
+            copy_to [sum]
+        ADD:
+            move_from_inbox
+            jump_if_zero_to DONE
+            add [sum]
+            copy_to [sum]
+            jump_to ADD
+        DONE:
+            copy_from [sum]
+            move_to_outbox
+            jump_to START"""
+)
+assert(c.outbox == [6, 0, 4])
+~~~
