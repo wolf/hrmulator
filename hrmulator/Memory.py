@@ -51,7 +51,9 @@ class Memory:
     def resolve_key(self, key):
         key = self.label_map.get(key, key)
         if type(key) is not int:
-            raise KeyError(key)
+            raise KeyError(key,
+                'The label "{}" has not been applied to any tile.'.format(key)
+            )
         return key
 
     def label_tile(self, key, label):
@@ -60,7 +62,7 @@ class Memory:
     def __getitem__(self, key):
         value = self.tiles.get(self.resolve_key(key), None)
         if value is None:
-            raise MemoryTileIsEmptyError(key)
+            raise MemoryTileIsEmptyError(key, 'Tile [{}] is empty.'.format(key))
         return value
 
     def __setitem__(self, key, value):

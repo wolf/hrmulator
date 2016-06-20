@@ -59,7 +59,7 @@ class AbstractInstruction:
 
     def assertAccumulatorIsNotEmpty(self, computer):
         if computer.accumulator is None:
-            raise AccumulatorIsEmptyError()
+            raise AccumulatorIsEmptyError('The accumulator is empty.')
 
 
 class NoOp(AbstractInstruction):
@@ -88,7 +88,7 @@ class MoveFromInbox(AbstractInstruction):
 
     def execute(self, computer):
         if computer.inbox is None or not len(computer.inbox):
-            raise InboxIsEmptyError()
+            raise InboxIsEmptyError('The inbox is empty.')
         computer.accumulator = computer.inbox.popleft()
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -210,8 +210,14 @@ class Jump(AbstractInstruction):
         result = self.destination_pc
         if result in computer.jump_table:
             result = computer.jump_table[result]
-        if type(result) is not int or not 0<=result<len(computer.program):
-            raise NoSuchJumpDestinationError(result)
+        if type(result) is not int:
+            raise NoSuchJumpDestinationError(result,
+                'The label "{}" does not appear in the program.'.format(result)
+            )
+        elif not 0<=result<len(computer.program):
+            raise NoSuchJumpDestinationError(result,
+                'Step number {} is outside the range of the program.'.format(result)
+            )
         return result
 
     def execute(self, computer):
