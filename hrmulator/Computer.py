@@ -101,7 +101,7 @@ class Computer:
         self.print_program()
         print()
 
-        printable_inbox = list(self.inbox)
+        printable_inbox = list(self.inbox or [])
             # copy our inbox, a deque, into a list; because
             # the deque will be consumed before we are ready to print
 
