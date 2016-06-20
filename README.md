@@ -71,7 +71,7 @@ cd hrmulator
 python setup.py install
 ~~~
 
-...from that point forward, `hrmulator` is available for import wherever you are working, including into `iPython`.  If you're thinking of working on `hrmulator` itself, consider saying `python setup.py develop` instead as that install symlinks that lead back to your clone.
+...from that point forward, `hrmulator` is available for import wherever you are working, including into `IPython`.  If you're thinking of working on `hrmulator` itself, consider saying `python setup.py develop` instead as that installs symlinks that lead back to your clone.
 
 ### The Instruction Set
 
@@ -134,7 +134,9 @@ c.print_run_program(
         labels={'sum':0, 'zero':5},
         values={'zero':0}
     ),
+
     inbox=[2, 4, 0, 0, 4, 0],
+
     program_text="""
         START:
             copy_from [zero]
