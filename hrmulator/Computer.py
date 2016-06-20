@@ -78,6 +78,8 @@ class Computer:
     def run(self):
         self.program_counter = 0
         self.total_steps_executed = 0
+        if self.inbox is None:
+            self.inbox = []
         self.outbox = []
         try:
             while self.program_counter < len(self.program):
