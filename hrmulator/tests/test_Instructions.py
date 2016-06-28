@@ -59,6 +59,19 @@ class TestInstructions(TestCase):
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
+    def test_copy_from_indirect(self):
+        copy_from = hrmulator.Instructions.CopyFrom(0, indirect=True)
+        with self.assertRaises(MemoryTileIsEmptyError):
+            copy_from.execute(self.computer)
+        self.computer.memory[0] = 74
+        with self.assertRaises(MemoryTileIsEmptyError):
+            copy_from.execute(self.computer)
+        self.computer.memory[74] = 5
+        copy_from.execute(self.computer)
+        self.assertEqual(self.computer.accumulator, 5)
+        self.assertEqual(self.computer.program_counter, 1)
+        self.assertEqual(self.computer.total_steps_executed, 1)
+
     def test_copy_to(self):
         copy_to = hrmulator.Instructions.CopyTo(0)
         with self.assertRaises(hrmulator.Instructions.AccumulatorIsEmptyError):
@@ -71,6 +84,20 @@ class TestInstructions(TestCase):
         copy_to.execute(self.computer)
         self.assertEqual(self.computer.memory['hello'], 74)
         self.assertEqual(self.computer.accumulator, 74)
+        self.assertEqual(self.computer.program_counter, 1)
+        self.assertEqual(self.computer.total_steps_executed, 1)
+
+    def test_copy_to_indirect(self):
+        copy_to = hrmulator.Instructions.CopyTo('hello', indirect=True)
+        self.computer.accumulator = 0
+        self.computer.memory.label_tile(0, 'hello')
+        with self.assertRaises(MemoryTileIsEmptyError):
+            copy_to.execute(self.computer)
+        self.computer.memory['hello'] = 74
+        copy_to.execute(self.computer)
+        self.assertEqual(self.computer.memory['hello'], 74)
+        self.assertEqual(self.computer.memory[74], 0)
+        self.assertEqual(self.computer.accumulator, 0)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
@@ -88,6 +115,19 @@ class TestInstructions(TestCase):
         self.computer.memory['hello'] = 74
         add.execute(self.computer)
         self.assertEqual(self.computer.accumulator, 148)
+        self.assertEqual(self.computer.program_counter, 1)
+        self.assertEqual(self.computer.total_steps_executed, 1)
+
+    def test_add_indirect(self):
+        add = hrmulator.Instructions.Add('hello', indirect=True)
+        self.computer.accumulator = 74
+        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory['hello'] = 2
+        with self.assertRaises(MemoryTileIsEmptyError):
+            add.execute(self.computer)
+        self.computer.memory[2] = 26
+        add.execute(self.computer)
+        self.assertEqual(self.computer.accumulator, 100)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
@@ -188,4 +228,3 @@ class TestInstructions(TestCase):
         jump_if_negative_to.execute(self.computer)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 2)
-

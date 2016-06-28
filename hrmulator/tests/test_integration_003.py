@@ -6,17 +6,17 @@ from hrmulator import Computer, Memory
 program_text = """
 START:
     move_from_inbox
-    copy_to [A]
+    copy_to A
     move_from_inbox
-    copy_to [B]
-    subtract [A]
+    copy_to B
+    subtract A
     jump_if_negative_to A_GREATER_THAN_B
 
-    copy_from [B]
+    copy_from B
     jump_to FINISH
 
 A_GREATER_THAN_B:
-    copy_from [A]
+    copy_from A
 FINISH:
     move_to_outbox
     jump_to START

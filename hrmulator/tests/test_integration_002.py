@@ -6,18 +6,18 @@ from hrmulator import Computer, Memory
 program_text = """
 START:
     move_from_inbox
-    copy_to [counter]
+    copy_to counter
     move_to_outbox
-    copy_from [counter]
+    copy_from counter
     jump_if_negative_to COUNT_UP
     jump_if_zero_to START
 COUNT_DOWN:
-    bump_down [counter]
+    bump_down counter
     jump_if_zero_to FINISH
     move_to_outbox
     jump_to COUNT_DOWN
 COUNT_UP:
-    bump_up [counter]
+    bump_up counter
     jump_if_zero_to FINISH
     move_to_outbox
     jump_to COUNT_UP

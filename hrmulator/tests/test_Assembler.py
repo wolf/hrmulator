@@ -28,7 +28,7 @@ class TestAssembler(TestCase):
             program, jump_table = self.assembler.assemble_program_text(bad_assembly)
 
     def test_raises_unexpected_argument(self):
-        bad_assembly = """move_from_inbox [2]"""
+        bad_assembly = """move_from_inbox 2"""
         with self.assertRaises(hrmulator.Assembler.UnexpectedArgumentError):
             program, jump_table = self.assembler.assemble_program_text(bad_assembly)
 

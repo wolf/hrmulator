@@ -79,18 +79,18 @@ python setup.py install
 no_op
 move_from_inbox
 move_to_outbox
-copy_from [tile]
-copy_to [tile]
-add [tile]
-subtract [tile]
-bump_up [tile]
-bump_down [tile]
+copy_from tile
+copy_to tile
+add tile
+subtract tile
+bump_up tile
+bump_down tile
 jump_to place
 jump_if_zero_to place
 jump_if_negative_to place
 ~~~
 
-`[tile]` may be a number (like `[5]`) or a label (like `[hello]`) you applied to one of the numbered tiles.  `place` may be a step number (like `12`) or a label you inserted into the program (like `START`).  Here's an example using both memory and place labels:
+`tile` may be a number (like `5`) or a label (like `hello`) you applied to one of the numbered tiles.  `place` may be a step number (like `12`) or a label you inserted into the program (like `START`).  Here's an example using both memory and place labels:
 
 ~~~Python
 from hrmulator import Computer, Memory
@@ -98,16 +98,16 @@ from hrmulator import Computer, Memory
 
 program_text = """
 START:
-    copy_from [zero]
-    copy_to [sum]
+    copy_from zero
+    copy_to sum
 ADD:
     move_from_inbox
     jump_if_zero_to DONE
-    add [sum]
-    copy_to [sum]
+    add sum
+    copy_to sum
     jump_to ADD
 DONE:
-    copy_from [sum]
+    copy_from sum
     move_to_outbox
     jump_to START
 """
@@ -139,16 +139,16 @@ c.print_run_program(
 
     program_text="""
         START:
-            copy_from [zero]
-            copy_to [sum]
+            copy_from zero
+            copy_to sum
         ADD:
             move_from_inbox
             jump_if_zero_to DONE
-            add [sum]
-            copy_to [sum]
+            add sum
+            copy_to sum
             jump_to ADD
         DONE:
-            copy_from [sum]
+            copy_from sum
             move_to_outbox
             jump_to START"""
 )

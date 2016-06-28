@@ -62,11 +62,23 @@ class Memory:
     def __getitem__(self, key):
         value = self.tiles.get(self.resolve_key(key), None)
         if value is None:
-            raise MemoryTileIsEmptyError(key, 'Tile [{}] is empty.'.format(key))
+            raise MemoryTileIsEmptyError(key, 'Tile {} is empty.'.format(key))
+        return value
+
+    def get(self, key, indirect=False):
+        value = self.__getitem__(key)
+        if indirect:
+            value = self.__getitem__(value)
         return value
 
     def __setitem__(self, key, value):
         self.tiles[self.resolve_key(key)] = value
+
+    def set(self, key, value, indirect=False):
+        key = self.resolve_key(key)
+        if indirect:
+            key = self.resolve_key(self.__getitem__(key))
+        self.tiles[key] = value
 
     def __delitem__(self, key):
         del self.tiles[self.resolve_key(key)]

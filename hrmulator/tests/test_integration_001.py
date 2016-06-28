@@ -6,7 +6,7 @@ from hrmulator import Computer, Memory
 program_text = """
     jump_to START
 SAME:
-    copy_from [4]
+    copy_from 4
 FINISH:
     move_to_outbox
 START:
@@ -20,7 +20,7 @@ A_IS_NEGATIVE:
     move_from_inbox
     jump_if_negative_to SAME
 DIFFERENT:
-    copy_from [5]
+    copy_from 5
     jump_to FINISH
 """
 

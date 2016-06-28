@@ -6,26 +6,26 @@ from hrmulator import Computer, Memory
 program_text = """
 START:
     move_from_inbox
-    copy_to [A]
+    copy_to A
     move_from_inbox
     jump_if_zero_to ZERO
-    copy_to [B]
-    copy_to [product]
+    copy_to B
+    copy_to product
 
 LOOP:
-    bump_down [A]
+    bump_down A
     jump_if_zero_to DONE
     jump_if_negative_to ZERO
-    copy_from [B]
-    add [product]
-    copy_to [product]
+    copy_from B
+    add product
+    copy_to product
     jump_to LOOP
 
 DONE:
-    copy_from [product]
+    copy_from product
     jump_to OUTPUT
 ZERO:
-    copy_from [zero]
+    copy_from zero
 OUTPUT:
     move_to_outbox
     jump_to START

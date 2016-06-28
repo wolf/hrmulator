@@ -109,13 +109,16 @@ class AbstractTileInstruction(AbstractInstruction):
     has_argument = True
 
     def __str__(self):
-        return "{} [{}]".format(self.token, self.tile_index)
+        s = "{} [{}]" if self.indirect else "{} {}"
+        return s.format(self.token, self.tile_index)
 
     def colored_str(self):
         tile_str = termcolor.colored(str(self.tile_index), 'blue')
-        return "{} [{}]".format(self.token, tile_str)
+        s = "{} [{}]" if self.indirect else "{} {}"
+        return s.format(self.token, tile_str)
 
-    def __init__(self, tile_index):
+    def __init__(self, tile_index, indirect=False):
+        self.indirect = indirect
         self.tile_index = tile_index
 
 
@@ -123,7 +126,7 @@ class CopyFrom(AbstractTileInstruction):
     token = "copy_from"
 
     def execute(self, computer):
-        computer.accumulator = computer.memory[self.tile_index]
+        computer.accumulator = computer.memory.get(self.tile_index, self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -133,7 +136,7 @@ class CopyTo(AbstractTileInstruction):
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
-        computer.memory[self.tile_index] = computer.accumulator
+        computer.memory.set(self.tile_index, computer.accumulator, self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -143,7 +146,7 @@ class Add(AbstractTileInstruction):
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
-        computer.accumulator += computer.memory[self.tile_index]
+        computer.accumulator += computer.memory.get(self.tile_index, self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -153,7 +156,7 @@ class Subtract(AbstractTileInstruction):
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
-        computer.accumulator -= computer.memory[self.tile_index]
+        computer.accumulator -= computer.memory.get(self.tile_index, self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -166,8 +169,9 @@ class BumpUp(AbstractTileInstruction):
     token = "bump_up"
 
     def execute(self, computer):
-        computer.memory[self.tile_index] += 1
-        computer.accumulator = computer.memory[self.tile_index]
+        value = computer.memory.get(self.tile_index, self.indirect) + 1
+        computer.memory.set(self.tile_index, value, self.indirect)
+        computer.accumulator = value
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -180,8 +184,9 @@ class BumpDown(AbstractTileInstruction):
     token = "bump_down"
 
     def execute(self, computer):
-        computer.memory[self.tile_index] -= 1
-        computer.accumulator = computer.memory[self.tile_index]
+        value = computer.memory.get(self.tile_index, self.indirect) - 1
+        computer.memory.set(self.tile_index, value, self.indirect)
+        computer.accumulator = value
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
