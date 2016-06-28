@@ -39,12 +39,10 @@ class Assembler:
         # keep anything to the left of the comment marker
 
     label_re = re.compile('(\w+):')
-    tile_instruction_re = re.compile('(\w+)\s+\[(\w+)\]$')
+    instruction_with_arg_re = re.compile('(\w+)\s+(\w+)$')
+    indirect_tile_instruction_re = re.compile('(\w+)\s+\[(\w+)\]$')
         # [] required around tile index.  Why?  Because I like them.
         # Note tile index is made of word characters not necessarily digits.
-
-    jump_instruction_re = re.compile('(\w+)\s+(\w+)$')
-        # Note destination is made of word characters not necessarily digits.
 
     instruction_re = re.compile('(\w+)$')
 
@@ -92,15 +90,17 @@ class Assembler:
             # does it match the instruction pattern
             match = None
             arg = None
-            tile_match = re.match(self.tile_instruction_re, line)
-            jump_match = re.match(self.jump_instruction_re, line)
+            indirect = False
+            has_arg_match = re.match(self.instruction_with_arg_re, line)
+            indirect_tile_match = re.match(self.indirect_tile_instruction_re, line)
             op_match = re.match(self.instruction_re, line)
-            if tile_match is not None:
-                match = tile_match
+            if has_arg_match is not None:
+                match = has_arg_match
                 arg = match.group(2)
-            elif jump_match is not None:
-                match = jump_match
+            elif indirect_tile_match is not None:
+                match = indirect_tile_match
                 arg = match.group(2)
+                indirect = True
             else:
                 match = op_match
 
@@ -117,7 +117,10 @@ class Assembler:
                         arg = int(arg)
                     except ValueError:
                         pass
-                    instruction = klass(arg)
+                    if indirect:
+                        instruction = klass(arg, indirect=True)
+                    else:
+                        instruction = klass(arg)
                 elif arg is not None:
                     raise UnexpectedArgumentError(line_number, arg)
                 else:
