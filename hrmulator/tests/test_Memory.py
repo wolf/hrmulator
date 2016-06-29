@@ -13,13 +13,25 @@ class TestMemory(TestCase):
         with self.assertRaises(MemoryTileIsEmptyError):
             value = self.memory[0]
 
+    def test_memory_empty_lookup_get(self):
+        with self.assertRaises(MemoryTileIsEmptyError):
+            value = self.memory.get(0)
+
     def test_memory_unknown_label(self):
         with self.assertRaises(KeyError):
             value = self.memory['hello']
 
+    def test_memory_unknown_label_get(self):
+        with self.assertRaises(KeyError):
+            value = self.memory.get('hello')
+
     def test_memory_set_and_get(self):
         self.memory[0] = 74
         self.assertEqual(self.memory[0], 74)
+
+    def test_memory_set_and_get_functions(self):
+        self.memory.set(0, 74)
+        self.assertEqual(self.memory.get(0), 74)
 
     def test_memory_apply_label(self):
         self.memory.label_tile(0, 'hello')
@@ -58,3 +70,20 @@ class TestMemory(TestCase):
         self.assertEqual(m['hello'], 74)
         self.assertEqual(m[0], 74)
         self.assertEqual(m['hello'], m['goodbye'])
+
+    def test_memory_empty_lookup_indirect(self):
+        self.memory[0] = 74
+        # self.memory[74] = None
+        with self.assertRaises(MemoryTileIsEmptyError):
+            value = self.memory.get(0, indirect=True)
+
+    def test_memory_get_indirect(self):
+        self.memory[0] = 74
+        self.memory[74] = 'A'
+        value = self.memory.get(0, indirect=True)
+        self.assertEqual(value, 'A')
+
+    def test_memory_set_indirect(self):
+        self.memory[0] = 74
+        value = self.memory.set(0, 'A', indirect=True)
+        self.assertEqual(self.memory[74], 'A')
