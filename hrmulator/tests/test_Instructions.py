@@ -148,6 +148,19 @@ class TestInstructions(TestCase):
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
+    def test_subtract_indirect(self):
+        add = hrmulator.Instructions.Subtract('hello', indirect=True)
+        self.computer.accumulator = 74
+        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory['hello'] = 2
+        with self.assertRaises(MemoryTileIsEmptyError):
+            add.execute(self.computer)
+        self.computer.memory[2] = 26
+        add.execute(self.computer)
+        self.assertEqual(self.computer.accumulator, 48)
+        self.assertEqual(self.computer.program_counter, 1)
+        self.assertEqual(self.computer.total_steps_executed, 1)
+
     def test_bump_up(self):
         bump_up = hrmulator.Instructions.BumpUp('hello')
         with self.assertRaises(KeyError):
@@ -162,6 +175,24 @@ class TestInstructions(TestCase):
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
+    def test_bump_up_indirect(self):
+        bump_up = hrmulator.Instructions.BumpUp('hello', indirect=True)
+        with self.assertRaises(KeyError):
+            bump_up.execute(self.computer)
+        self.computer.memory.label_tile(0, 'hello')
+        with self.assertRaises(MemoryTileIsEmptyError):
+            bump_up.execute(self.computer)
+        self.computer.memory[0] = 74
+        with self.assertRaises(MemoryTileIsEmptyError):
+            bump_up.execute(self.computer)
+        self.computer.memory[74] = 5
+        bump_up.execute(self.computer)
+        self.assertEqual(self.computer.memory['hello'], 74)
+        self.assertEqual(self.computer.memory[74], 6)
+        self.assertEqual(self.computer.accumulator, 6)
+        self.assertEqual(self.computer.program_counter, 1)
+        self.assertEqual(self.computer.total_steps_executed, 1)
+
     def test_bump_down(self):
         bump_down = hrmulator.Instructions.BumpDown('hello')
         with self.assertRaises(KeyError):
@@ -173,6 +204,24 @@ class TestInstructions(TestCase):
         bump_down.execute(self.computer)
         self.assertEqual(self.computer.memory['hello'], 73)
         self.assertEqual(self.computer.accumulator, 73)
+        self.assertEqual(self.computer.program_counter, 1)
+        self.assertEqual(self.computer.total_steps_executed, 1)
+
+    def test_bump_down_indirect(self):
+        bump_up = hrmulator.Instructions.BumpDown('hello', indirect=True)
+        with self.assertRaises(KeyError):
+            bump_up.execute(self.computer)
+        self.computer.memory.label_tile(0, 'hello')
+        with self.assertRaises(MemoryTileIsEmptyError):
+            bump_up.execute(self.computer)
+        self.computer.memory[0] = 74
+        with self.assertRaises(MemoryTileIsEmptyError):
+            bump_up.execute(self.computer)
+        self.computer.memory[74] = 5
+        bump_up.execute(self.computer)
+        self.assertEqual(self.computer.memory['hello'], 74)
+        self.assertEqual(self.computer.memory[74], 4)
+        self.assertEqual(self.computer.accumulator, 4)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
