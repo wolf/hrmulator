@@ -71,7 +71,7 @@ class Computer:
             print(" {}{}{:03d}:{} {}".format(
                 '@' if i == self.program_counter else ' ',
                 colorama.Style.DIM,
-                i,
+                i+1,
                 colorama.Style.RESET_ALL,
                 instruction.colored_str()))
 
