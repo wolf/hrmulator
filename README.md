@@ -10,7 +10,7 @@ As I was playing Human Resource Machine, and the problems started getting larger
 
 `hrmulator` is simply a tool to help you play with Human Resource Machine programs in textual form, so you can apply source code control tools.  It's no good to you if you're not playing this game.  Go buy the game.  Tomorrow Corporation, please don't sue me.
 
-These tools are really rough, but improving with time.  A simple program to copy from the inbox to the outbox looks like this:
+These tools are really rough, but improving with time.  It only has the capabilities that I know about from how far I am in the game, which is currently year 34.  A simple program to copy from the inbox to the outbox looks like this:
 
 ~~~Assembly
 START:
@@ -34,9 +34,9 @@ The output would be:
 simple_copy.hrm
 
 START:
-  000: move_from_inbox
-  001: move_to_outbox
-  002: jump_to START
+  001: move_from_inbox
+  002: move_to_outbox
+  003: jump_to START
 
 Inbox:
 [1, 2, 3, 4, 5, 6, 7]

@@ -121,6 +121,9 @@ class AbstractTileInstruction(AbstractInstruction):
         self.indirect = indirect
         self.tile_index = tile_index
 
+    def is_char(self, value):
+        return type(value)==str and len(value)==1
+
 
 class CopyFrom(AbstractTileInstruction):
     token = "copy_from"
@@ -156,7 +159,12 @@ class Subtract(AbstractTileInstruction):
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
-        computer.accumulator -= computer.memory.get(self.tile_index, self.indirect)
+        value_to_subtract = computer.memory.get(self.tile_index, self.indirect)
+        if self.is_char(value_to_subtract):
+            value_to_subtract = ord(value_to_subtract)
+        if self.is_char(computer.accumulator):
+            computer.accumulator = ord(computer.accumulator)
+        computer.accumulator -= value_to_subtract
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
