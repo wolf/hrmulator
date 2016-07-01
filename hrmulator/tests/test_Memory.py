@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 import hrmulator
-from hrmulator.Memory import MemoryTileIsEmptyError
+from hrmulator.Memory import MemoryTileIsEmptyError, CantIndirectThroughLetter
 
 
 class TestMemory(TestCase):
@@ -87,3 +87,13 @@ class TestMemory(TestCase):
         self.memory[0] = 74
         value = self.memory.set(0, 'A', indirect=True)
         self.assertEqual(self.memory[74], 'A')
+
+    def test_memory_get_indirect_through_letter(self):
+        self.memory[0] = 'A'
+        with self.assertRaises(CantIndirectThroughLetter):
+            value = self.memory.get(0, indirect=True)
+
+    def test_memory_set_indirect_through_letter(self):
+        self.memory[0] = 'A'
+        with self.assertRaises(CantIndirectThroughLetter):
+            value = self.memory.set(0, 'A', indirect=True)
