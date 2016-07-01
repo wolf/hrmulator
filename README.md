@@ -10,7 +10,7 @@ As I was playing Human Resource Machine, and the problems started getting larger
 
 `hrmulator` is simply a tool to help you play with Human Resource Machine programs in textual form, so you can apply source code control tools.  It's no good to you if you're not playing this game.  Go buy the game.  Tomorrow Corporation, please don't sue me.
 
-These tools are really rough, but improving with time.  It only has the capabilities that I know about from how far I am in the game, which is currently year 34.  A simple program to copy from the inbox to the outbox looks like this:
+These tools are really rough, but improving with time.  It only has the capabilities that I know about from how far I am in the game, which is currently year 39.  A simple program to copy from the inbox to the outbox looks like this:
 
 ~~~Assembly
 START:
