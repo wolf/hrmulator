@@ -35,6 +35,12 @@ class MemoryTileIsEmptyError(MemoryError):
     pass
 
 
+class CantIndirectThroughLetter(MemoryError):
+
+    def __init__(self):
+        super().__init__('A letter does not address any tile.')
+
+
 class Memory:
 
     def __init__(self, labels=None, values=None):
@@ -47,6 +53,9 @@ class Memory:
         if values is not None:
             for k, v in values.items():
                 self.__setitem__(k, v) # ensures we resolve initial labels
+
+    def is_char(self, value):
+        return type(value)==str and len(value)==1
 
     def resolve_key(self, key):
         key = self.label_map.get(key, key)
@@ -68,6 +77,8 @@ class Memory:
     def get(self, key, *, indirect=False):
         value = self.__getitem__(key)
         if indirect:
+            if self.is_char(value):
+                raise CantIndirectThroughLetter()
             value = self.__getitem__(value)
         return value
 
@@ -77,6 +88,8 @@ class Memory:
     def set(self, key, value, *, indirect=False):
         key = self.resolve_key(key)
         if indirect:
+            if self.is_char(key):
+                raise CantIndirectThroughLetter()
             key = self.resolve_key(self.__getitem__(key))
         self.tiles[key] = value
 
