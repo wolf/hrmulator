@@ -133,7 +133,7 @@ class CopyFrom(AbstractTileInstruction):
     token = "copy_from"
 
     def execute(self, computer):
-        computer.accumulator = computer.memory.get(self.tile_index, self.indirect)
+        computer.accumulator = computer.memory.get(self.tile_index, indirect=self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -143,7 +143,7 @@ class CopyTo(AbstractTileInstruction):
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
-        computer.memory.set(self.tile_index, computer.accumulator, self.indirect)
+        computer.memory.set(self.tile_index, computer.accumulator, indirect=self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -153,7 +153,7 @@ class Add(AbstractTileInstruction):
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
-        value_to_add = computer.memory.get(self.tile_index, self.indirect)
+        value_to_add = computer.memory.get(self.tile_index, indirect=self.indirect)
         if self.is_char(value_to_add) or self.is_char(computer.accumulator):
             raise IncompatibleTypesError("You can't add a letter.  What would that even mean?")
         computer.accumulator += value_to_add
@@ -166,7 +166,7 @@ class Subtract(AbstractTileInstruction):
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
-        value_to_subtract = computer.memory.get(self.tile_index, self.indirect)
+        value_to_subtract = computer.memory.get(self.tile_index, indirect=self.indirect)
         value_to_subtract_is_char = self.is_char(value_to_subtract)
         if value_to_subtract_is_char != self.is_char(computer.accumulator):
             raise IncompatibleTypesError("You can't subtract (from) a letter.  What would that even mean?")
@@ -186,10 +186,10 @@ class BumpUp(AbstractTileInstruction):
     token = "bump_up"
 
     def execute(self, computer):
-        value = computer.memory.get(self.tile_index, self.indirect) + 1
+        value = computer.memory.get(self.tile_index, indirect=self.indirect) + 1
         if self.is_char(value):
             raise IncompatibleTypesError("You can't add to a letter.  What would that even mean?")
-        computer.memory.set(self.tile_index, value, self.indirect)
+        computer.memory.set(self.tile_index, value, indirect=self.indirect)
         computer.accumulator = value
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -203,10 +203,10 @@ class BumpDown(AbstractTileInstruction):
     token = "bump_down"
 
     def execute(self, computer):
-        value = computer.memory.get(self.tile_index, self.indirect) - 1
+        value = computer.memory.get(self.tile_index, indirect=self.indirect) - 1
         if self.is_char(value):
             raise IncompatibleTypesError("You can't subtract from a letter.  What would that even mean?")
-        computer.memory.set(self.tile_index, value, self.indirect)
+        computer.memory.set(self.tile_index, value, indirect=self.indirect)
         computer.accumulator = value
         computer.program_counter += 1
         computer.total_steps_executed += 1
