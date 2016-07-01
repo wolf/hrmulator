@@ -27,6 +27,9 @@ You can put initial values onto the tiles as well:
 """
 
 
+from collections import defaultdict
+
+
 class MemoryError(Exception):
     pass
 
@@ -95,3 +98,25 @@ class Memory:
 
     def __delitem__(self, key):
         del self.tiles[self.resolve_key(key)]
+
+    def debug_print(self):
+        labels = defaultdict(list)
+        for label in self.label_map:
+            labels[self.label_map[label]].append(label)
+
+        print('Memory:')
+        for k, v in sorted(self.tiles.items()):
+            print('{:2d}'.format(k), end='')
+            if k in labels:
+                separator = ''
+                print('(', end='')
+                for label in labels[k]:
+                    print(separator, end='')
+                    separator = ', '
+                    print(label, end='')
+                print(')', end='')
+            print(':', end='')
+            if self.is_char(v):
+                print("'{}'".format(v))
+            else:
+                print(v)
