@@ -186,9 +186,10 @@ class BumpUp(AbstractTileInstruction):
     token = "bump_up"
 
     def execute(self, computer):
-        value = computer.memory.get(self.tile_index, indirect=self.indirect) + 1
+        value = computer.memory.get(self.tile_index, indirect=self.indirect)
         if self.is_char(value):
             raise IncompatibleTypesError("You can't add to a letter.  What would that even mean?")
+        value += 1
         computer.memory.set(self.tile_index, value, indirect=self.indirect)
         computer.accumulator = value
         computer.program_counter += 1
@@ -203,9 +204,10 @@ class BumpDown(AbstractTileInstruction):
     token = "bump_down"
 
     def execute(self, computer):
-        value = computer.memory.get(self.tile_index, indirect=self.indirect) - 1
+        value = computer.memory.get(self.tile_index, indirect=self.indirect)
         if self.is_char(value):
             raise IncompatibleTypesError("You can't subtract from a letter.  What would that even mean?")
+        value -= 1
         computer.memory.set(self.tile_index, value, indirect=self.indirect)
         computer.accumulator = value
         computer.program_counter += 1
