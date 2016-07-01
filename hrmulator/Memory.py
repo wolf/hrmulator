@@ -91,9 +91,9 @@ class Memory:
     def set(self, key, value, *, indirect=False):
         key = self.resolve_key(key)
         if indirect:
+            key = self.__getitem__(key)
             if self.is_char(key):
                 raise CantIndirectThroughLetter()
-            key = self.resolve_key(self.__getitem__(key))
         self.tiles[key] = value
 
     def __delitem__(self, key):
