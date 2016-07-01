@@ -5,8 +5,6 @@ the trouble we go to is in printing everything (and using a little color).
 """
 
 
-from __future__ import print_function
-
 from collections import defaultdict, deque
 
 import colorama
