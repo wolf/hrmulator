@@ -43,7 +43,7 @@ class Computer:
         # invert the jump table, so I can see where to print the labels
         labels = defaultdict(list)
         for label in self.jump_table:
-            labels[self.jump_table[label]].append(label)
+            labels[self.jump_table[label]+1].append(label)
 
         # If you want to print just a single line of the program, provide
         # a slice of size 1.
@@ -55,7 +55,7 @@ class Computer:
             offset = 0
 
         # now step through the actual program: at each step...
-        for i, instruction in enumerate(program_chunk, offset):
+        for i, instruction in enumerate(program_chunk, offset+1):
             # print any labels that lead to this step;
             if i in labels:
                 for label in labels[i]:
@@ -69,7 +69,7 @@ class Computer:
             print(" {}{}{:03d}:{} {}".format(
                 '@' if i == self.program_counter else ' ',
                 colorama.Style.DIM,
-                i+1,
+                i,
                 colorama.Style.RESET_ALL,
                 instruction.colored_str()))
 
