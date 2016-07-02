@@ -28,11 +28,18 @@ class Debugger(Computer):
                 except InboxIsEmptyError:
                     command = 'c'
             elif command == 'a':
-                print(self.accumulator)
+                if self.memory.is_char(self.accumulator):
+                    print("'{}'".format(self.accumulator))
+                else:
+                    print(self.accumulator)
             elif command == 'e':
                 print('inbox:', end='')
                 print(self.inbox, end='')
-                print('; accumulator:{}'.format(self.accumulator), end='')
+                if self.memory.is_char(self.accumulator):
+                    format_str = "; accumulator:'{}'"
+                else:
+                    format_str = "; accumulator:{}"
+                print(format_str.format(self.accumulator), end='')
                 print('; outbox:', end='')
                 print(self.outbox)
             elif command == 'i':
