@@ -13,6 +13,8 @@ class Debugger(Computer):
 
     def __init__(self):
         super().__init__()
+        # breakpoints are held in sets, their elements are step indices into
+        # self.program.  They number from 0, so they match the program_counter.
         self.breakpoints = set({})
         self.temporary_breakpoints = {0}
 
@@ -28,8 +30,10 @@ class Debugger(Computer):
             if command == 's':
                 ins = self.program[self.program_counter]
                 if isinstance(ins, Jump):
+                    # if it's a jump of any kind, break at the jump destination
                     self.temporary_breakpoints.add(ins.lookup_destination(self))
                 if type(ins) is not Jump:
+                    # if it's not an unconditional jump, break before the next instruction
                     self.temporary_breakpoints.add(self.program_counter+1)
                 break
             elif command == 'c':
@@ -37,6 +41,8 @@ class Debugger(Computer):
             elif command.startswith('b'):
                 match = re.match(self.set_or_clear_breakpoint_re, command)
                 if match is not None:
+                    # remember, print_program numbers from 1, so the user breakpoint request is
+                    # off-by-one, fix it
                     step_number = int(match.group(1))-1
                     if step_number in self.breakpoints:
                         self.breakpoints.remove(step_number)
