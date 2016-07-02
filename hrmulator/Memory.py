@@ -1,11 +1,22 @@
 """
 Memory in Human Resource Machine is represented as numbered tiles on the
 floor.  They can also have textual labels.  If tile 5 is labeled 'hello', then
-your program can `copy_to [hello]` and it will do the same thing as
-`copy_to [5]`.  You make this happen with:
+your program can `copy_to hello` and it will do the same thing as
+`copy_to 5`.  You make this happen with:
 
         memory.label_tile(5, 'hello')
         memory['hello'] = 74
+
+The Human Resource Machine also implements "indirect" memory access, so, for
+instance, if memory tile 0 contains 74, you can get and set the value in
+memory tile 74 _through_ tile 0, like so:
+
+        memory.get(0, indirect=True)
+        memory.set(0, memory.get(0, indirect=True)+1, indirect=True)
+
+The only things you can put onto a memory tile are integers and characters.
+You cannot indirect through a character, even though you could have a memory
+tile named with that character.  Sorry, but that's how the game works.
 
 Here, I implement the simplest thing that can reasonably work.  Note that I
 don't support slices at all (of course).
@@ -42,6 +53,12 @@ class CantIndirectThroughLetter(MemoryError):
 
     def __init__(self):
         super().__init__('A letter does not address any tile.')
+
+
+class CantStoreBadType(MemoryError):
+
+    def __init__(self):
+        super().__init__('A memory tile may only hold an integer or a single character.')
 
 
 class Memory:
@@ -86,9 +103,13 @@ class Memory:
         return value
 
     def __setitem__(self, key, value):
+        if type(value) is not int and not self.is_char(value):
+            raise CantStoreBadType()
         self.tiles[self.resolve_key(key)] = value
 
     def set(self, key, value, *, indirect=False):
+        if type(value) is not int and not self.is_char(value):
+            raise CantStoreBadType()
         key = self.resolve_key(key)
         if indirect:
             key = self.__getitem__(key)
