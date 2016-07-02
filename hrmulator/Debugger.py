@@ -10,7 +10,13 @@ class Debugger(Computer):
 
     def __init__(self):
         super().__init__()
-        self.break_points = {}
+        self.breakpoints = set({})
+        self.temporary_breakpoints = {0}
+
+    def adorn_line(self, step_number):
+        prefix = '!' if step_number-1 in self.breakpoints else ' '
+        suffix = super().adorn_line(step_number)
+        return prefix + suffix
 
     def menu(self):
         command = ''
