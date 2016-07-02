@@ -30,7 +30,7 @@ class Computer:
     def set_inbox(self, inbox):
         self.inbox = deque(inbox)
 
-    def load_program(self, program_path=None, program_text=None):
+    def load_program(self, *, program_path=None, program_text=None):
         asm = Assembler()
         if program_text is not None:
             self.program, self.jump_table = asm.assemble_program_text(program_text)
@@ -43,6 +43,7 @@ class Computer:
         # invert the jump table, so I can see where to print the labels
         labels = defaultdict(list)
         for label in self.jump_table:
+            # we print instruction indices off by one, so do the same for labels
             labels[self.jump_table[label]+1].append(label)
 
         # If you want to print just a single line of the program, provide
@@ -67,7 +68,7 @@ class Computer:
             # then print the step number and the instruction at that step
             # (include markers for and noting the current step)
             print(" {}{}{:03d}:{} {}".format(
-                '@' if i == self.program_counter else ' ',
+                '@' if i-1 == self.program_counter else ' ', # avoid doing math on None
                 colorama.Style.DIM,
                 i,
                 colorama.Style.RESET_ALL,
@@ -77,7 +78,7 @@ class Computer:
         self.program_counter = 0
         self.total_steps_executed = 0
         if self.inbox is None:
-            self.inbox = []
+            self.inbox = deque([])
         self.outbox = []
         try:
             while self.program_counter < len(self.program):
