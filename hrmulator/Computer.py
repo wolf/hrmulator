@@ -39,11 +39,15 @@ class Computer:
             self.program, self.jump_table = asm.assemble_program_file(program_path)
             self.program_path = program_path
 
+    def adorn_line(self, step_number):
+        return '@' if step_number-1 == self.program_counter else ' ' # avoid doing math on None
+
     def print_program(self, slice_to_print=None):
         # invert the jump table, so I can see where to print the labels
         labels = defaultdict(list)
         for label in self.jump_table:
-            # we print instruction indices off by one, so do the same for labels
+            # we print instruction indices off by one, and lookup the label with the off-by-one
+            # index, so make sure the label is off by one to match
             labels[self.jump_table[label]+1].append(label)
 
         # If you want to print just a single line of the program, provide
@@ -68,7 +72,7 @@ class Computer:
             # then print the step number and the instruction at that step
             # (include markers for and noting the current step)
             print(" {}{}{:03d}:{} {}".format(
-                '@' if i-1 == self.program_counter else ' ', # avoid doing math on None
+                self.adorn_line(i),
                 colorama.Style.DIM,
                 i,
                 colorama.Style.RESET_ALL,
@@ -87,7 +91,7 @@ class Computer:
             pass
         self.program_counter = None
 
-    def print_run_program(self, program_path=None, program_text=None, inbox=None, memory=None):
+    def print_run_program(self, *, program_path=None, program_text=None, inbox=None, memory=None):
         if program_path is not None or program_text is not None:
             self.load_program(program_path=program_path, program_text=program_text)
         if inbox is not None:
