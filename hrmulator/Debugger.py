@@ -24,8 +24,10 @@ class Debugger(Computer):
         return prefix + suffix
 
     def menu(self):
+        command = None
         while True:
-            self.print_program(slice(self.program_counter, self.program_counter+1))
+            if command != 'l':
+                self.print_program(slice(self.program_counter, self.program_counter+1))
             command = input('% ')
             if command == 's':
                 ins = self.program[self.program_counter]
