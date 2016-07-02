@@ -1,12 +1,15 @@
 from collections import deque
 import readline
+import re
 
 from .Computer import Computer
 from .Memory import Memory
-from .Instructions import InboxIsEmptyError
+from .Instructions import InboxIsEmptyError, Jump
 
 
 class Debugger(Computer):
+
+    set_or_clear_breakpoint_re = re.compile('^b ([0-9]+)$')
 
     def __init__(self):
         super().__init__()
@@ -19,14 +22,26 @@ class Debugger(Computer):
         return prefix + suffix
 
     def menu(self):
-        command = ''
-        while command not in ('c', 'q'):
+        while True:
+            self.print_program(slice(self.program_counter, self.program_counter+1))
             command = input('% ')
             if command == 's':
-                try:
-                    self.program[self.program_counter].execute(self)
-                except InboxIsEmptyError:
-                    command = 'c'
+                ins = self.program[self.program_counter]
+                if isinstance(ins, Jump):
+                    self.temporary_breakpoints.add(ins.lookup_destination(self))
+                if type(ins) is not Jump:
+                    self.temporary_breakpoints.add(self.program_counter+1)
+                break
+            elif command == 'c':
+                return False
+            elif command.startswith('b'):
+                match = re.match(self.set_or_clear_breakpoint_re, command)
+                if match is not None:
+                    step_number = int(match.group(1))-1
+                    if step_number in self.breakpoints:
+                        self.breakpoints.remove(step_number)
+                    else:
+                        self.breakpoints.add(step_number)
             elif command == 'a':
                 if self.memory.is_char(self.accumulator):
                     print("'{}'".format(self.accumulator))
@@ -50,21 +65,22 @@ class Debugger(Computer):
                 self.print_program()
             elif command == 'm':
                 self.memory.debug_print()
+            elif command == 'q':
+                return True
             elif command == '?':
                 print("""Commands:
-  s - step
   a - print the accumulator
-  e - print inbox, accumulator, and outbox
+  b <number> - set or clear a breakpoint at step <number>
+  c - continue running
+  e - print everything: inbox, accumulator, and outbox
   i - print the inbox
-  o - print the outbox
   l - print a complete listing of the program
   m - print the contents of memory
+  o - print the outbox
+  q - quit immediately (abort the program)
+  s - step
   ? - this help message""")
-            if command != 'l':
-                start = max(self.program_counter-3, 0)
-                self.print_program(slice(start, self.program_counter+3))
-        return command != 'q'
-
+        return False
 
     def run(self):
         self.program_counter = 0
@@ -72,13 +88,13 @@ class Debugger(Computer):
         if self.inbox is None:
             self.inbox = deque([])
         self.outbox = []
+        escape = False
         try:
-            escape = not self.menu()
-            if not escape:
-                while self.program_counter < len(self.program):
-                    if self.program_counter in self.break_points:
-                        self.menu()
-                    self.program[self.program_counter].execute(self)
+            while self.program_counter < len(self.program) and not escape:
+                if self.program_counter in self.breakpoints.union(self.temporary_breakpoints):
+                    self.temporary_breakpoints = set()
+                    escape = self.menu()
+                self.program[self.program_counter].execute(self)
         except InboxIsEmptyError:
             pass
         if not escape:
