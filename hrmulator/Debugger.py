@@ -106,6 +106,8 @@ class Debugger(Computer):
         except InboxIsEmptyError:
             pass
         if not escape:
+            print()
+            print('Done.  Post-mortem:')
             self.menu()
         self.program_counter = None
 
