@@ -77,3 +77,15 @@ class Debugger(Computer):
         if not escape:
             self.menu()
         self.program_counter = None
+
+    def print_run_program(self, *,
+            program_path=None,
+            program_text=None,
+            inbox=None,
+            memory=None):
+        self.program_counter = 0
+        super().print_run_program(
+            program_path=program_path,
+            program_text=program_text,
+            inbox=inbox,
+            memory=memory)
