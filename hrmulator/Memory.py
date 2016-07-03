@@ -120,24 +120,32 @@ class Memory:
     def __delitem__(self, key):
         del self.tiles[self.resolve_key(key)]
 
-    def debug_print(self):
+    def debug_print(self, key=None):
         labels = defaultdict(list)
         for label in self.label_map:
             labels[self.label_map[label]].append(label)
 
-        print('Memory:')
-        for k, v in sorted(self.tiles.items()):
-            print('{:2d}'.format(k), end='')
-            if k in labels:
+        def print_one(key):
+            key = self.resolve_key(key)
+            print('{:2d}'.format(key), end='')
+            if key in labels:
                 separator = ''
                 print('(', end='')
-                for label in labels[k]:
+                for label in labels[key]:
                     print(separator, end='')
                     separator = ', '
                     print(label, end='')
                 print(')', end='')
             print(':', end='')
-            if self.is_char(v):
-                print("'{}'".format(v))
+            value = self.tiles[key]
+            if self.is_char(value):
+                print("'{}'".format(value))
             else:
-                print(v)
+                print(value)
+
+        if key is None:
+            # print everything
+            for key in sorted(self.tiles.keys()):
+                print_one(key)
+        else:
+            print_one(key)

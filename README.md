@@ -154,3 +154,5 @@ c.print_run_program(
 )
 assert(c.outbox == [6, 0, 4])
 ~~~
+
+For some fun, replace the instantiation of `Computer()` with `Debugger()`.  That will load up the program in the debugger, stop at address `0`, and give you a `debug> ` prompt.

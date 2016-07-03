@@ -9,7 +9,7 @@ from .Instructions import InboxIsEmptyError, Jump
 
 class Debugger(Computer):
 
-    set_or_clear_breakpoint_re = re.compile('^b ([0-9]+)$')
+    command_with_argument_re = re.compile('^[a-z]\s*(\w+)$')
 
     def __init__(self):
         super().__init__()
@@ -19,17 +19,23 @@ class Debugger(Computer):
         self.temporary_breakpoints = {0}
 
     def adorn_line(self, step_number):
+        # step_number comes out of print_program, so it's off-by-one for the user
         prefix = '!' if step_number-1 in self.breakpoints else ' '
         suffix = super().adorn_line(step_number)
         return prefix + suffix
 
     def menu(self):
+        ok_to_print_one_line = True
         command = None
         while True:
-            if command != 'l':
+            if ok_to_print_one_line:
                 self.print_program(slice(self.program_counter, self.program_counter+1))
-            command = input('% ')
+            ok_to_print_one_line = True
+            command = input('\ndebug> ')
             if command == 's':
+                ###
+                ### step
+                ###
                 ins = self.program[self.program_counter]
                 if isinstance(ins, Jump):
                     # if it's a jump of any kind, break at the jump destination
@@ -39,23 +45,43 @@ class Debugger(Computer):
                     self.temporary_breakpoints.add(self.program_counter+1)
                 break
             elif command == 'c':
+                ###
+                ### continue
+                ###
                 return False
             elif command.startswith('b'):
-                match = re.match(self.set_or_clear_breakpoint_re, command)
-                if match is not None:
-                    # remember, print_program numbers from 1, so the user breakpoint request is
-                    # off-by-one, fix it
-                    step_number = int(match.group(1))-1
-                    if step_number in self.breakpoints:
-                        self.breakpoints.remove(step_number)
-                    else:
-                        self.breakpoints.add(step_number)
+                ###
+                ### breakpoint
+                ###
+                match = re.match(self.command_with_argument_re, command)
+                if match is None:
+                    place = self.program_counter
+                else:
+                    place = match.group(1)
+
+                if place in self.jump_table:
+                    # locations in the jump_table already match the program_counter
+                    place = self.jump_table[place]
+                elif match is not None:
+                    # remember, print_program numbers from 1, so if the user
+                    # typed a number here, it is off-by-one; fix it
+                    place = int(place)-1
+                if place in self.breakpoints:
+                    self.breakpoints.remove(place)
+                else:
+                    self.breakpoints.add(place)
             elif command == 'a':
+                ###
+                ### accumulator
+                ###
                 if self.memory.is_char(self.accumulator):
                     print("'{}'".format(self.accumulator))
                 else:
                     print(self.accumulator)
             elif command == 'e':
+                ###
+                ### everything
+                ###
                 print('inbox:', end='')
                 print(self.inbox, end='')
                 if self.memory.is_char(self.accumulator):
@@ -66,26 +92,65 @@ class Debugger(Computer):
                 print('; outbox:', end='')
                 print(self.outbox)
             elif command == 'i':
-                print(self.inbox)
+                ###
+                ### inbox
+                ###
+                printable_inbox = list(self.inbox or [])
+                print(printable_inbox)
             elif command == 'o':
+                ###
+                ### outbox
+                ###
                 print(self.outbox)
-            elif command == 'l':
-                self.print_program()
-            elif command == 'm':
-                self.memory.debug_print()
+            elif command.startswith('l'):
+                ###
+                ### list
+                ###
+                match = re.match(self.command_with_argument_re, command)
+                if match is None:
+                    slice_to_print = None
+                else:
+                    slice_to_print = slice(
+                        self.program_counter,
+                        self.program_counter + int(match.group(1))
+                    )
+                self.print_program(slice_to_print)
+                ok_to_print_one_line = False
+            elif command.startswith('m'):
+                ###
+                ### memory
+                ###
+                match = re.match(self.command_with_argument_re, command)
+                if match is None:
+                    self.memory.debug_print()
+                else:
+                    key = match.group(1)
+                    try:
+                        key = int(key)
+                    except ValueError:
+                        pass
+                    self.memory.debug_print(key)
             elif command == 'q':
+                ###
+                ### quit
+                ###
                 return True
             elif command == '?':
+                ###
+                ### help
+                ###
                 print("""Commands:
-  a - print the accumulator
+  a - print the accumulator: the value you are currently holding
   b <number> - set or clear a breakpoint at step <number>
-  c - continue running
+  c - continue running until the next breakpoint (if any)
   e - print everything: inbox, accumulator, and outbox
   i - print the inbox
   l - print a complete listing of the program
-  m - print the contents of memory
+  l <number> print the next <number> lines of the program
+  m - print every value in memory
+  m <place> - print a specific value from memory
   o - print the outbox
-  q - quit immediately (abort the program)
+  q - stop executing the program, and leave the debugger
   s - step
   ? - this help message""")
         return False
@@ -107,7 +172,7 @@ class Debugger(Computer):
             pass
         if not escape:
             print()
-            print('Done.  Post-mortem:')
+            print('Program ran to completion.  Post-mortem:')
             self.menu()
         self.program_counter = None
 
