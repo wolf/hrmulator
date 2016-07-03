@@ -40,6 +40,8 @@ You can put initial values onto the tiles as well:
 
 from collections import defaultdict
 
+import termcolor
+
 
 class MemoryError(Exception):
     pass
@@ -132,14 +134,15 @@ class Memory:
 
         def print_one(key):
             key = self.resolve_key(key)
-            print('{:2d}'.format(key), end='')
+            key_str = termcolor.colored('{:2d}'.format(key), 'blue')
+            print(key_str, end='')
             if key in labels:
                 separator = ''
                 print('(', end='')
                 for label in labels[key]:
                     print(separator, end='')
                     separator = ', '
-                    print(label, end='')
+                    print(termcolor.colored(label, 'blue'), end='')
                 print(')', end='')
             print(':', end='')
             value = self.tiles[key]
