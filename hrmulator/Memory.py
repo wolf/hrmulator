@@ -144,8 +144,11 @@ class Memory:
                     separator = ', '
                     print(termcolor.colored(label, 'blue'), end='')
                 print(')', end='')
-            print(':', end='')
-            value = self.tiles[key]
+            print(': ', end='')
+            try:
+                value = self.tiles[key]
+            except KeyError:
+                value = None
             if self.is_char(value):
                 print("'{}'".format(value))
             else:
