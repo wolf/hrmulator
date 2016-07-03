@@ -10,6 +10,7 @@ from .Instructions import InboxIsEmptyError, Jump
 class Debugger(Computer):
 
     command_with_argument_re = re.compile('^[a-z]\s*(\w+)$')
+    execute_command_re = re.compile('^x\s+(.*)$')
 
     def __init__(self):
         super().__init__()
@@ -29,26 +30,21 @@ class Debugger(Computer):
         command = None
         while True:
             if ok_to_print_one_line:
+                print()
                 self.print_program(slice(self.program_counter, self.program_counter+1))
             ok_to_print_one_line = True
+
             command = input('\ndebug> ')
-            if command == 's':
+
+            if command == 'a':
                 ###
-                ### step
+                ### accumulator
                 ###
-                ins = self.program[self.program_counter]
-                if isinstance(ins, Jump):
-                    # if it's a jump of any kind, break at the jump destination
-                    self.temporary_breakpoints.add(ins.lookup_destination(self))
-                if type(ins) is not Jump:
-                    # if it's not an unconditional jump, break before the next instruction
-                    self.temporary_breakpoints.add(self.program_counter+1)
-                break
-            elif command == 'c':
-                ###
-                ### continue
-                ###
-                return False
+                print('\naccumulator: ', end='')
+                if self.memory.is_char(self.accumulator):
+                    print("'{}'".format(self.accumulator))
+                else:
+                    print(self.accumulator)
             elif command.startswith('b'):
                 ###
                 ### breakpoint
@@ -70,38 +66,32 @@ class Debugger(Computer):
                     self.breakpoints.remove(place)
                 else:
                     self.breakpoints.add(place)
-            elif command == 'a':
+            elif command == 'c':
                 ###
-                ### accumulator
+                ### continue
                 ###
-                if self.memory.is_char(self.accumulator):
-                    print("'{}'".format(self.accumulator))
-                else:
-                    print(self.accumulator)
+                return False
             elif command == 'e':
                 ###
                 ### everything
                 ###
-                print('inbox:', end='')
-                print(self.inbox, end='')
+                print('\ninbox: ', end='')
+                printable_inbox = list(self.inbox or [])
+                print(printable_inbox, end='')
                 if self.memory.is_char(self.accumulator):
-                    format_str = "; accumulator:'{}'"
+                    format_str = "; accumulator: '{}'"
                 else:
-                    format_str = "; accumulator:{}"
+                    format_str = "; accumulator: {}"
                 print(format_str.format(self.accumulator), end='')
-                print('; outbox:', end='')
+                print('; outbox: ', end='')
                 print(self.outbox)
             elif command == 'i':
                 ###
                 ### inbox
                 ###
+                print('\ninbox: ', end='')
                 printable_inbox = list(self.inbox or [])
                 print(printable_inbox)
-            elif command == 'o':
-                ###
-                ### outbox
-                ###
-                print(self.outbox)
             elif command.startswith('l'):
                 ###
                 ### list
@@ -114,6 +104,7 @@ class Debugger(Computer):
                         self.program_counter,
                         self.program_counter + int(match.group(1))
                     )
+                print()
                 self.print_program(slice_to_print)
                 ok_to_print_one_line = False
             elif command.startswith('m'):
@@ -121,25 +112,55 @@ class Debugger(Computer):
                 ### memory
                 ###
                 match = re.match(self.command_with_argument_re, command)
+                print()
                 if match is None:
                     self.memory.debug_print()
                 else:
-                    key = match.group(1)
-                    try:
-                        key = int(key)
-                    except ValueError:
-                        pass
-                    self.memory.debug_print(key)
+                    self.memory.debug_print(match.group(1))
+            elif command == 'o':
+                ###
+                ### outbox
+                ###
+                print('\noutbox: ', end='')
+                print(self.outbox)
             elif command == 'q':
                 ###
                 ### quit
                 ###
                 return True
+            elif command == 'r':
+                ###
+                ### restart
+                ###
+                self.program_counter = 0
+                self.set_inbox(self.original_inbox)
+                self.outbox = []
+                self.accumulator = None
+            elif command == 's':
+                ###
+                ### step
+                ###
+                ins = self.program[self.program_counter]
+                if isinstance(ins, Jump):
+                    # if it's a jump of any kind, break at the jump destination
+                    self.temporary_breakpoints.add(ins.lookup_destination(self))
+                if type(ins) is not Jump:
+                    # if it's not an unconditional jump, break before the next instruction
+                    self.temporary_breakpoints.add(self.program_counter+1)
+                break
+            elif command.startswith('x'):
+                ###
+                ### execute
+                ###
+                match = re.match(self.execute_command_re, command)
+                if match is not None:
+                    exec(match.group(1), globals(), locals())
             elif command == '?':
                 ###
                 ### help
                 ###
-                print("""Commands:
+                print("""
+Commands:
   a - print the accumulator: the value you are currently holding
   b <number> - set or clear a breakpoint at step <number>
   c - continue running until the next breakpoint (if any)
@@ -151,7 +172,9 @@ class Debugger(Computer):
   m <place> - print a specific value from memory
   o - print the outbox
   q - stop executing the program, and leave the debugger
+  r - restart the program from the beginning, resetting the inbox and outbox
   s - step
+  x <python> - execute some python, e.g., to label or set memory, or change the inbox
   ? - this help message""")
         return False
 
@@ -160,6 +183,7 @@ class Debugger(Computer):
         self.total_steps_executed = 0
         if self.inbox is None:
             self.inbox = deque([])
+        self.original_inbox = list(self.inbox)
         self.outbox = []
         escape = False
         try:
