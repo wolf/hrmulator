@@ -12,7 +12,7 @@ As I was playing Human Resource Machine, and the problems started getting larger
 
 These tools are really rough, but improving with time.  A simple program to copy from the inbox to the outbox looks like this:
 
-~~~Assembly
+~~~plain
 START:
     move_from_inbox
     move_to_outbox
@@ -46,7 +46,7 @@ Outbox:
 Program size: 3; Total steps executed: 21
 ~~~
 
-You can simplify the world a little by putting `simple_copy`s code right in your Python file:
+You can simplify the world a little by putting `simple_copy`'s code right in your Python file:
 
 ~~~Python
 from hrmulator import Computer
@@ -75,7 +75,7 @@ python setup.py install
 
 ### The Instruction Set
 
-~~~
+~~~plain
 no_op
 move_from_inbox
 move_to_outbox
@@ -155,4 +155,53 @@ c.print_run_program(
 assert(c.outbox == [6, 0, 4])
 ~~~
 
-For some fun, replace the instantiation of `Computer()` with `Debugger()`.  That will load up the program in the debugger, stop at address `0`, and give you a `debug> ` prompt.
+For some fun, replace the instantiation of `Computer()` with `Debugger()`.  That will load up the program in the debugger, stop at address `0`, and give you a `debug> ` prompt.  From there you can single-step, print the contents of memory, look at the accumulator, set and clear breakpoints, etc.
+
+The most powerful feature of the debugger is the `x` command: execute arbitrary Python.  So for instance, you can dynamically set or label memory, or push new values onto the inbox.  Within the Python, `self` is the underlying `Computer` instance.
+
+~~~plain
+debug> m
+
+24(zero):0
+
+START:
+  @001: copy_from zero
+
+debug> x self.memory[5] = 74; self.memory.label_tile(5, 'age')
+
+START:
+  @001: copy_from zero
+
+debug> m
+
+ 5(age):74
+24(zero):0
+
+START:
+  @001: copy_from zero
+
+debug>
+~~~
+
+Here's the help from the debugger:
+
+~~~plain
+debug> ?
+
+Commands:
+  a - print the accumulator: the value you are currently holding
+  b <number> - set or clear a breakpoint at step <number>
+  c - continue running until the next breakpoint (if any)
+  e - print everything: inbox, accumulator, and outbox
+  i - print the inbox
+  l - print a complete listing of the program
+  l <number> print the next <number> lines of the program
+  m - print every value in memory
+  m <place> - print a specific value from memory
+  o - print the outbox
+  q - stop executing the program, and leave the debugger
+  r - restart the program from the beginning, resetting the inbox and outbox
+  s - step
+  x <python> - execute some python, e.g., to label or set memory, or change the inbox
+  ? - this help message
+~~~
