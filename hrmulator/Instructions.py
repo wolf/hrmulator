@@ -25,7 +25,7 @@ assembler.  The `__str__` function does the job of building a printable and
 machine readable instruction out of `token`.
 
 """
-
+from .Utilities import is_char
 
 import colorama
 import termcolor
@@ -125,9 +125,6 @@ class AbstractTileInstruction(AbstractInstruction):
         self.indirect = indirect
         self.tile_index = tile_index
 
-    def is_char(self, value):
-        return type(value)==str and len(value)==1
-
 
 class CopyFrom(AbstractTileInstruction):
     token = "copy_from"
@@ -154,7 +151,7 @@ class Add(AbstractTileInstruction):
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
         value_to_add = computer.memory.get(self.tile_index, indirect=self.indirect)
-        if self.is_char(value_to_add) or self.is_char(computer.accumulator):
+        if is_char(value_to_add) or is_char(computer.accumulator):
             raise IncompatibleTypesError("You can't add a letter.  What would that even mean?")
         computer.accumulator += value_to_add
         computer.program_counter += 1
@@ -167,8 +164,8 @@ class Subtract(AbstractTileInstruction):
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
         value_to_subtract = computer.memory.get(self.tile_index, indirect=self.indirect)
-        value_to_subtract_is_char = self.is_char(value_to_subtract)
-        if value_to_subtract_is_char != self.is_char(computer.accumulator):
+        value_to_subtract_is_char = is_char(value_to_subtract)
+        if value_to_subtract_is_char != is_char(computer.accumulator):
             raise IncompatibleTypesError("You can't subtract (from) a letter.  What would that even mean?")
         if value_to_subtract_is_char:
             value_to_subtract = ord(value_to_subtract)
@@ -187,7 +184,7 @@ class BumpUp(AbstractTileInstruction):
 
     def execute(self, computer):
         value = computer.memory.get(self.tile_index, indirect=self.indirect)
-        if self.is_char(value):
+        if is_char(value):
             raise IncompatibleTypesError("You can't add to a letter.  What would that even mean?")
         value += 1
         computer.memory.set(self.tile_index, value, indirect=self.indirect)
@@ -205,7 +202,7 @@ class BumpDown(AbstractTileInstruction):
 
     def execute(self, computer):
         value = computer.memory.get(self.tile_index, indirect=self.indirect)
-        if self.is_char(value):
+        if is_char(value):
             raise IncompatibleTypesError("You can't subtract from a letter.  What would that even mean?")
         value -= 1
         computer.memory.set(self.tile_index, value, indirect=self.indirect)

@@ -5,6 +5,7 @@ import re
 from .Computer import Computer
 from .Memory import Memory
 from .Instructions import InboxIsEmptyError, Jump
+from .Utilities import is_char
 
 
 class Debugger(Computer):
@@ -41,7 +42,7 @@ class Debugger(Computer):
                 ### accumulator
                 ###
                 print('\naccumulator: ', end='')
-                if self.memory.is_char(self.accumulator):
+                if is_char(self.accumulator):
                     print("'{}'".format(self.accumulator))
                 else:
                     print(self.accumulator)
@@ -78,7 +79,7 @@ class Debugger(Computer):
                 print('\ninbox: ', end='')
                 printable_inbox = list(self.inbox or [])
                 print(printable_inbox, end='')
-                if self.memory.is_char(self.accumulator):
+                if is_char(self.accumulator):
                     format_str = "; accumulator: '{}'"
                 else:
                     format_str = "; accumulator: {}"

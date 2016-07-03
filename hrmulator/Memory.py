@@ -42,6 +42,8 @@ from collections import defaultdict
 
 import termcolor
 
+from .Utilities import is_char
+
 
 class MemoryError(Exception):
     pass
@@ -76,9 +78,6 @@ class Memory:
             for k, v in values.items():
                 self.__setitem__(k, v) # ensures we resolve initial labels
 
-    def is_char(self, value):
-        return type(value)==str and len(value)==1
-
     def resolve_key(self, key):
         try:
             # don't be fooled into thinking '24' is a label
@@ -104,23 +103,23 @@ class Memory:
     def get(self, key, *, indirect=False):
         value = self.__getitem__(key)
         if indirect:
-            if self.is_char(value):
+            if is_char(value):
                 raise CantIndirectThroughLetter()
             value = self.__getitem__(value)
         return value
 
     def __setitem__(self, key, value):
-        if type(value) is not int and not self.is_char(value):
+        if type(value) is not int and not is_char(value):
             raise CantStoreBadType()
         self.tiles[self.resolve_key(key)] = value
 
     def set(self, key, value, *, indirect=False):
-        if type(value) is not int and not self.is_char(value):
+        if type(value) is not int and not is_char(value):
             raise CantStoreBadType()
         key = self.resolve_key(key)
         if indirect:
             key = self.__getitem__(key)
-            if self.is_char(key):
+            if is_char(key):
                 raise CantIndirectThroughLetter()
         self.tiles[key] = value
 
@@ -149,7 +148,7 @@ class Memory:
                 value = self.tiles[key]
             except KeyError:
                 value = None
-            if self.is_char(value):
+            if is_char(value):
                 print("'{}'".format(value))
             else:
                 print(value)
