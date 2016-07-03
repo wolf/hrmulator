@@ -78,6 +78,11 @@ class Memory:
         return type(value)==str and len(value)==1
 
     def resolve_key(self, key):
+        try:
+            # don't be fooled into thinking '24' is a label
+            key = int(key)
+        except ValueError:
+            pass
         key = self.label_map.get(key, key)
         if type(key) is not int:
             raise KeyError(key,
