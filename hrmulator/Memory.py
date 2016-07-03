@@ -38,7 +38,7 @@ You can put initial values onto the tiles as well:
 """
 
 
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 import termcolor
 
@@ -68,8 +68,11 @@ class CantStoreBadType(MemoryError):
 class Memory:
 
     def __init__(self, labels=None, values=None):
-        self.label_map = {} if labels is None else labels.copy()
+        self.label_map = OrderedDict(labels or [])
             # label_map maps string label : to integer tile index
+            # using OrderedDict here ensures that debug_print will print multiple
+            # labels on the same tile in the order which they were applied
+            # Yeah, I realize it's a ridiculous edge case.
 
         self.tiles = {}
             # the tiles themselves are sparse, so use a dictionary
