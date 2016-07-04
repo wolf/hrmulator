@@ -2,6 +2,8 @@ from collections import deque
 import readline
 import re
 
+import colorama
+
 from .Computer import Computer
 from .Memory import Memory
 from .Instructions import InboxIsEmptyError, Jump
@@ -20,11 +22,34 @@ class Debugger(Computer):
         self.breakpoints = set({})
         self.temporary_breakpoints = {0}
 
-    def adorn_line(self, step_number):
-        # step_number comes out of print_program, so it's off-by-one for the user
-        prefix = '!' if step_number-1 in self.breakpoints else ' '
-        suffix = super().adorn_line(step_number)
-        return prefix + suffix
+    def _print_line(self, step_number, instruction):
+        """
+        Return a prefix for an individual line of the program listing that shows
+        anything interesting there.
+
+        In our case, we want to show breakpoints, and color breakpointed
+        addresses red.
+        """
+
+        # `step_number` here comes from `print_program` so it's off-by-one for the user
+        is_breakpoint = step_number-1 in self.breakpoints
+        print("  {}{}{}{:03d}{}: {}".format(
+            '!' if is_breakpoint else ' ',
+            '@' if step_number-1 == self.program_counter else ' ',  # avoid doing math on None
+            colorama.Fore.RED if is_breakpoint else colorama.Style.DIM,
+            step_number,
+            colorama.Style.RESET_ALL,
+            instruction.colored_str()))
+
+    def _print_label(self, step_number, label):
+        if step_number-1 in self.breakpoints:
+            print('{}{}{}:'.format(
+                colorama.Fore.RED,
+                label,
+                colorama.Style.RESET_ALL
+            ))
+        else:
+            super()._print_label(step_number, label)
 
     def menu(self):
         ok_to_print_one_line = True

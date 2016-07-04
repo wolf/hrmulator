@@ -39,8 +39,30 @@ class Computer:
             self.program, self.jump_table = asm.assemble_program_file(program_path)
             self.program_path = program_path
 
-    def adorn_line(self, step_number):
-        return '@' if step_number-1 == self.program_counter else ' ' # avoid doing math on None
+    def _print_line(self, step_number, instruction):
+        """
+        Return a prefix for an individual line of the program listing that shows
+        anything interesting there.
+
+        Meant to be overridden by sub-classes. E.g., Computer puts an '@' on
+        the line where the program counter is; Debugger puts a '!' on any line
+        that has a breakpoint.
+        """
+
+        # `step_number` here comes from `print_program` so it's off-by-one for the user
+        print("   {}{}{:03d}:{} {}".format(
+            '@' if step_number-1 == self.program_counter else ' ',
+            colorama.Style.DIM,
+            step_number,
+            colorama.Style.RESET_ALL,
+            instruction.colored_str()))
+
+    def _print_label(self, step_number, label):
+        print('{}{}{}:'.format(
+            colorama.Fore.GREEN,
+            label,
+            colorama.Style.RESET_ALL
+        ))
 
     def print_program(self, slice_to_print=None):
         # invert the jump table, so I can see where to print the labels
@@ -64,19 +86,8 @@ class Computer:
             # print any labels that lead to this step;
             if i in labels:
                 for label in labels[i]:
-                    print('{}{}{}:'.format(
-                        colorama.Fore.GREEN,
-                        label,
-                        colorama.Style.RESET_ALL
-                    ))
-            # then print the step number and the instruction at that step
-            # (include markers for and noting the current step)
-            print(" {}{}{:03d}:{} {}".format(
-                self.adorn_line(i),
-                colorama.Style.DIM,
-                i,
-                colorama.Style.RESET_ALL,
-                instruction.colored_str()))
+                    self._print_label(i, label)
+            self._print_line(i, instruction)
 
     def run(self):
         self.program_counter = 0
