@@ -1,7 +1,7 @@
 from collections import OrderedDict
 import re
 
-from .Instructions import InstructionCatalog
+from .Instructions import INSTRUCTION_CATALOG
 
 
 class AssemblerError(Exception):
@@ -59,10 +59,10 @@ class Assembler:
 
     def __init__(self):
         """
-        Build a dictionary from Instruction.py's InstructionCatalog that
+        Build a dictionary from Instruction.py's INSTRUCTION_CATALOG that
         maps symbols to the actual Instructions that implement them.
         """
-        self.symbolCatalog = {ins.symbol: ins for ins in InstructionCatalog}
+        self.symbol_catalog = {ins.symbol: ins for ins in INSTRUCTION_CATALOG}
 
     def assemble_program_file(self, path):
         """...when your HRM program lives in the file-system."""
@@ -128,11 +128,11 @@ class Assembler:
 
             if match is not None:
                 symbol = match.group(1).lower()
-                if symbol not in self.symbolCatalog:
+                if symbol not in self.symbol_catalog:
                     raise UnknownInstructionError(line_number, match.group(1))
 
-                klass = self.symbolCatalog[symbol]
-                if klass.has_argument:
+                class_ = self.symbol_catalog[symbol]
+                if class_.has_argument:
                     if arg is None:
                         raise ArgumentRequiredError(line_number, line)
                     try:
@@ -142,17 +142,17 @@ class Assembler:
                         # otherwise it's a name or label
                         pass
 
-                    # Can't just say klass(arg, indirect=indirect) because it
+                    # Can't just say class_(arg, indirect=indirect) because it
                     # might be one of the jump instructions.  They don't take
                     # the indirect keyword
                     if indirect:
-                        instruction = klass(arg, indirect=True)
+                        instruction = class_(arg, indirect=True)
                     else:
-                        instruction = klass(arg)
+                        instruction = class_(arg)
                 elif arg is not None:
                     raise UnexpectedArgumentError(line_number, arg)
                 else:
-                    instruction = klass()
+                    instruction = class_()
                 program.append(instruction)
                 step += 1
             else:

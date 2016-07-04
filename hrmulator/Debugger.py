@@ -51,7 +51,7 @@ class Debugger(Computer):
         else:
             super()._print_label(step_number, label)
 
-    def menu(self):
+    def _menu(self):
         ok_to_print_one_line = True
         command = None
         while True:
@@ -169,7 +169,7 @@ class Debugger(Computer):
                 ins = self.program[self.program_counter]
                 if isinstance(ins, Jump):
                     # if it's a jump of any kind, break at the jump destination
-                    self.temporary_breakpoints.add(ins.lookup_destination(self))
+                    self.temporary_breakpoints.add(ins._lookup_destination(self))
                 if type(ins) is not Jump:
                     # if it's not an unconditional jump, break before the next instruction
                     self.temporary_breakpoints.add(self.program_counter+1)
@@ -216,14 +216,14 @@ Commands:
             while self.program_counter < len(self.program) and not escape:
                 if self.program_counter in self.breakpoints.union(self.temporary_breakpoints):
                     self.temporary_breakpoints = set()
-                    escape = self.menu()
+                    escape = self._menu()
                 self.program[self.program_counter].execute(self)
         except InboxIsEmptyError:
             pass
         if not escape:
             print()
             print('Program ran to completion.  Post-mortem:')
-            self.menu()
+            self._menu()
         self.program_counter = None
 
     def print_run_program(self, *,

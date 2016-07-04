@@ -61,7 +61,7 @@ class AbstractInstruction:
     def colored_str(self):
         return self.__str__()
 
-    def assertAccumulatorIsNotEmpty(self, computer):
+    def _assertAccumulatorIsNotEmpty(self, computer):
         if computer.accumulator is None:
             raise AccumulatorIsEmptyError('The accumulator is empty.')
 
@@ -104,7 +104,7 @@ class MoveToOutbox(AbstractInstruction):
     symbol = "move_to_outbox"
 
     def execute(self, computer):
-        self.assertAccumulatorIsNotEmpty(computer)
+        self._assertAccumulatorIsNotEmpty(computer)
         computer.outbox.append(computer.accumulator)
         computer.accumulator = None
         computer.program_counter += 1
@@ -141,7 +141,7 @@ class CopyTo(AbstractTileInstruction):
     symbol = "copy_to"
 
     def execute(self, computer):
-        self.assertAccumulatorIsNotEmpty(computer)
+        self._assertAccumulatorIsNotEmpty(computer)
         computer.memory.set(self.tile_index, computer.accumulator, indirect=self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -151,7 +151,7 @@ class Add(AbstractTileInstruction):
     symbol = "add"
 
     def execute(self, computer):
-        self.assertAccumulatorIsNotEmpty(computer)
+        self._assertAccumulatorIsNotEmpty(computer)
         value_to_add = computer.memory.get(self.tile_index, indirect=self.indirect)
         if is_char(value_to_add) or is_char(computer.accumulator):
             raise IncompatibleTypesError("You can't add a letter.  What would that even mean?")
@@ -164,7 +164,7 @@ class Subtract(AbstractTileInstruction):
     symbol = "subtract"
 
     def execute(self, computer):
-        self.assertAccumulatorIsNotEmpty(computer)
+        self._assertAccumulatorIsNotEmpty(computer)
         value_to_subtract = computer.memory.get(self.tile_index, indirect=self.indirect)
         value_to_subtract_is_char = is_char(value_to_subtract)
         if value_to_subtract_is_char != is_char(computer.accumulator):
@@ -233,7 +233,7 @@ class Jump(AbstractInstruction):
     def __init__(self, destination_pc):
         self.destination_pc = destination_pc
 
-    def lookup_destination(self, computer):
+    def _lookup_destination(self, computer):
         result = self.destination_pc
         if result in computer.jump_table:
             result = computer.jump_table[result]
@@ -248,7 +248,7 @@ class Jump(AbstractInstruction):
         return result
 
     def execute(self, computer):
-        computer.program_counter = self.lookup_destination(computer)
+        computer.program_counter = self._lookup_destination(computer)
         computer.total_steps_executed += 1
 
 
@@ -259,9 +259,9 @@ class JumpIfZero(Jump):
     symbol = "jump_if_zero_to"
 
     def execute(self, computer):
-        self.assertAccumulatorIsNotEmpty(computer)
+        self._assertAccumulatorIsNotEmpty(computer)
         if computer.accumulator == 0:
-            computer.program_counter = self.lookup_destination(computer)
+            computer.program_counter = self._lookup_destination(computer)
         else:
             computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -278,15 +278,15 @@ class JumpIfNegative(Jump):
     symbol = "jump_if_negative_to"
 
     def execute(self, computer):
-        self.assertAccumulatorIsNotEmpty(computer)
+        self._assertAccumulatorIsNotEmpty(computer)
         if computer.accumulator < 0:
-            computer.program_counter = self.lookup_destination(computer)
+            computer.program_counter = self._lookup_destination(computer)
         else:
             computer.program_counter += 1
         computer.total_steps_executed += 1
 
 
-InstructionCatalog = [
+INSTRUCTION_CATALOG = [
     NoOp,
     MoveFromInbox,
     MoveToOutbox,
