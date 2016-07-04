@@ -34,6 +34,18 @@ class SyntaxError(AssemblerError):
 
 
 class Assembler:
+    """
+    This is the class that turns text into an HRM program.
+
+    The public interface is:
+
+        Assembler.assemble_program_file(file_path)
+        Assembler.assemble_program_text(str)
+
+    Either your program is stored in the file-system somewhere, or else you
+    provide it inline.  Your choice.  Both routines return a tuple of the
+    program itself, and the jump table referring into it.
+    """
 
     comment_re = re.compile('(.*)#.*')
         # keep anything to the left of the comment marker
@@ -41,32 +53,45 @@ class Assembler:
     label_re = re.compile('(\w+):')
     instruction_with_arg_re = re.compile('(\w+)\s+(\w+)$')
     indirect_tile_instruction_re = re.compile('(\w+)\s+\[(\w+)\]$')
-        # [] required around tile index.  Why?  Because I like them.
         # Note tile index is made of word characters not necessarily digits.
 
     instruction_re = re.compile('(\w+)$')
 
     def __init__(self):
-        self.symbolCatalog = {ins.token: ins for ins in InstructionCatalog}
+        """
+        Build a dictionary from Instruction.py's InstructionCatalog that
+        maps symbols to the actual Instructions that implement them.
+        """
+        self.symbolCatalog = {ins.symbol: ins for ins in InstructionCatalog}
 
     def assemble_program_file(self, path):
+        """...when your HRM program lives in the file-system."""
         with open(path, 'r') as infile:
             lines = infile.readlines()
-        return self.assemble_program(lines)
+        return self._assemble_program(lines)
 
     def assemble_program_text(self, text):
+        """...when your HRM program is provided inline."""
         lines = text.split('\n')
-        return self.assemble_program(lines)
+        return self._assemble_program(lines)
 
-    def assemble_program(self, lines):
+    def _assemble_program(self, lines):
+        """Read the source line-by-line and translate it into instructions."""
         program = []
 
         jump_table = OrderedDict()
-            # using an OrderedDict here makes the labels print in the right
-            # order when there are multiple labels at the same point
+            # Maps labels to step numbers, 0-based, like program itself and
+            # the program_counter.  We save the labels instead of resolving
+            # them immediately to step numbers in the instructions because
+            # we want to print them when we print the program.  Both the label
+            # itself, and where it's the argument to a jump instruction.
+
+            # Using an OrderedDict here makes the labels print in the right
+            # order when there are multiple labels at the same point.  Edge
+            # case, I know.
 
         step = 0
-        line_number = 0
+        line_number = 0 # ...for error reporting; 1-based like your editor.
         for line in lines:
             line_number += 1
 
@@ -87,36 +112,39 @@ class Assembler:
                 jump_table[match.group(1)] = step
                 continue
 
-            # does it match the instruction pattern
             match = None
             arg = None
             indirect = False
             has_arg_match = re.match(self.instruction_with_arg_re, line)
             indirect_tile_match = re.match(self.indirect_tile_instruction_re, line)
             op_match = re.match(self.instruction_re, line)
-            if has_arg_match is not None:
-                match = has_arg_match
+
+            match = has_arg_match or indirect_tile_match
+            if match is not None:
                 arg = match.group(2)
-            elif indirect_tile_match is not None:
-                match = indirect_tile_match
-                arg = match.group(2)
-                indirect = True
+                indirect = indirect_tile_match is not None
             else:
                 match = op_match
 
             if match is not None:
-                try:
-                    klass = self.symbolCatalog[match.group(1).lower()]
-                except KeyError:
+                symbol = match.group(1).lower()
+                if symbol not in self.symbolCatalog:
                     raise UnknownInstructionError(line_number, match.group(1))
 
+                klass = self.symbolCatalog[symbol]
                 if klass.has_argument:
                     if arg is None:
                         raise ArgumentRequiredError(line_number, line)
                     try:
+                        # arg could be a raw step number, or tile index.
                         arg = int(arg)
                     except ValueError:
+                        # otherwise it's a name or label
                         pass
+
+                    # Can't just say klass(arg, indirect=indirect) because it
+                    # might be one of the jump instructions.  They don't take
+                    # the indirect keyword
                     if indirect:
                         instruction = klass(arg, indirect=True)
                     else:

@@ -18,11 +18,11 @@ accumulator and the program_counter.  There are 12 concrete instructions:
     JumpIfZero              jump_if_zero_to
     JumpIfNegative          jump_if_negative_to
 
-In each case the class variable `token` is used both for printing and for the
+In each case the class variable `symbol` is used both for printing and for the
 symbol lookup needed in the assembler.  The `execute` function does the main
 work.  `__init__` and `has_argument` cooperate to collect the argument in the
 assembler.  The `__str__` function does the job of building a printable and
-machine readable instruction out of `token`.
+machine readable instruction out of `symbol`.
 
 """
 from .Utilities import is_char
@@ -56,7 +56,7 @@ class AbstractInstruction:
     has_argument = False
 
     def __str__(self):
-        return self.token
+        return self.symbol
 
     def colored_str(self):
         return self.__str__()
@@ -72,7 +72,7 @@ class NoOp(AbstractInstruction):
 
     Counts as a step executed when evaluating the optimization challenges.
     """
-    token = "no_op"
+    symbol = "no_op"
 
     def execute(self, computer):
         computer.program_counter += 1
@@ -87,8 +87,10 @@ class MoveFromInbox(AbstractInstruction):
     exception is thrown that nicely terminates this run of the (inner)
     program.  That is, it does _not_ terminate this Python script: it
     terminates the inner hrm program.
+
+    MoveFromInbox expects computer.inbox to implement popleft(), as deque does.
     """
-    token = "move_from_inbox"
+    symbol = "move_from_inbox"
 
     def execute(self, computer):
         if computer.inbox is None or not len(computer.inbox):
@@ -99,7 +101,7 @@ class MoveFromInbox(AbstractInstruction):
 
 
 class MoveToOutbox(AbstractInstruction):
-    token = "move_to_outbox"
+    symbol = "move_to_outbox"
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
@@ -112,22 +114,22 @@ class MoveToOutbox(AbstractInstruction):
 class AbstractTileInstruction(AbstractInstruction):
     has_argument = True
 
-    def __str__(self):
-        s = "{} [{}]" if self.indirect else "{} {}"
-        return s.format(self.token, self.tile_index)
-
-    def colored_str(self):
-        tile_str = termcolor.colored(str(self.tile_index), 'blue')
-        s = "{} [{}]" if self.indirect else "{} {}"
-        return s.format(self.token, tile_str)
-
     def __init__(self, tile_index, indirect=False):
         self.indirect = indirect
         self.tile_index = tile_index
 
+    def __str__(self):
+        s = "{} [{}]" if self.indirect else "{} {}"
+        return s.format(self.symbol, self.tile_index)
+
+    def colored_str(self):
+        tile_str = termcolor.colored(str(self.tile_index), 'blue')
+        s = "{} [{}]" if self.indirect else "{} {}"
+        return s.format(self.symbol, tile_str)
+
 
 class CopyFrom(AbstractTileInstruction):
-    token = "copy_from"
+    symbol = "copy_from"
 
     def execute(self, computer):
         computer.accumulator = computer.memory.get(self.tile_index, indirect=self.indirect)
@@ -136,7 +138,7 @@ class CopyFrom(AbstractTileInstruction):
 
 
 class CopyTo(AbstractTileInstruction):
-    token = "copy_to"
+    symbol = "copy_to"
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
@@ -146,7 +148,7 @@ class CopyTo(AbstractTileInstruction):
 
 
 class Add(AbstractTileInstruction):
-    token = "add"
+    symbol = "add"
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
@@ -159,7 +161,7 @@ class Add(AbstractTileInstruction):
 
 
 class Subtract(AbstractTileInstruction):
-    token = "subtract"
+    symbol = "subtract"
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
@@ -180,7 +182,7 @@ class BumpUp(AbstractTileInstruction):
     Increment the value in a given memory tile by 1, and copy it into the
     accumulator.
     """
-    token = "bump_up"
+    symbol = "bump_up"
 
     def execute(self, computer):
         value = computer.memory.get(self.tile_index, indirect=self.indirect)
@@ -198,7 +200,7 @@ class BumpDown(AbstractTileInstruction):
     Decrement the value in a given memory tile by 1, and copy it into the
     accumulator.
     """
-    token = "bump_down"
+    symbol = "bump_down"
 
     def execute(self, computer):
         value = computer.memory.get(self.tile_index, indirect=self.indirect)
@@ -213,15 +215,15 @@ class BumpDown(AbstractTileInstruction):
 
 class Jump(AbstractInstruction):
     """Jump (unconditionally) to the supplied program step."""
-    token = "jump_to"
+    symbol = "jump_to"
     has_argument = True
 
     def __str__(self):
         try:
-            result = "{} {:03d}".format(self.token, self.destination_pc)
+            result = "{} {:03d}".format(self.symbol, self.destination_pc)
         except ValueError:
             result = "{} {}{}{}".format(
-                self.token,
+                self.symbol,
                 colorama.Fore.GREEN,
                 self.destination_pc,
                 colorama.Style.RESET_ALL
@@ -254,7 +256,7 @@ class JumpIfZero(Jump):
     """
     Jump if and only if the accumulator == 0 to the supplied program step.
     """
-    token = "jump_if_zero_to"
+    symbol = "jump_if_zero_to"
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
@@ -273,7 +275,7 @@ class JumpIfNegative(Jump):
     Note: it is a fatal error if the value in the accumulator is not
     comparable to zero.
     """
-    token = "jump_if_negative_to"
+    symbol = "jump_if_negative_to"
 
     def execute(self, computer):
         self.assertAccumulatorIsNotEmpty(computer)
