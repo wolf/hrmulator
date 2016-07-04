@@ -1,40 +1,74 @@
 """
 Memory in Human Resource Machine is represented as numbered tiles on the
 floor.  They can also have textual labels.  If tile 5 is labeled 'hello', then
-your program can `copy_to hello` and it will do the same thing as
-`copy_to 5`.  You make this happen with:
+your program can `copy_to hello` and it will do the same thing as `copy_to 5`.
+You make this happen with `label_tile`:
 
-        memory.label_tile(5, 'hello')
-        memory['hello'] = 74
-
-The Human Resource Machine also implements "indirect" memory access, so, for
-instance, if memory tile 0 contains 74, you can get and set the value in
-memory tile 74 _through_ tile 0, like so:
-
-        memory.get(0, indirect=True)
-        memory.set(0, memory.get(0, indirect=True)+1, indirect=True)
-
-The only things you can put onto a memory tile are integers and characters.
-You cannot indirect through a character, even though you could have a memory
-tile named with that character.  Sorry, but that's how the game works.
-
-Here, I implement the simplest thing that can reasonably work.  Note that I
-don't support slices at all (of course).
+    >>> m = Memory()
+    >>> m[5] = 74
+    >>> m[5]
+    74
+    >>> m.label_tile(5, label='index') # keyword for demonstration only
+    >>> m['index']
+    74
 
 You don't have to call `label_tile` individually for every label you wish to
 apply.  You can label them all at once by passing in a dictionary at
 `__init__` time.  E.g.,
 
-        memory = Memory(labels={'hello':5, 'zero':9})
+    >>> m = Memory(labels={'index':5, 'zero':9})
 
 You can put initial values onto the tiles as well:
 
-        memory = Memory(
-            labels={'hello':5, 'zero':9},
-            values={'zero':0, 5:'A'}
-        )
+    >>> m = Memory(
+    ...     labels={'index':5, 'zero':9},
+    ...     values={'index':74, 'zero':0}
+    ... )
+    >>> m['zero']
+    0
 
-        assert(memory['hello'] == 'A')
+Normally, this constructor is all you care about since the game predefines
+the contents of memory, and you predefine the labels.  You don't otherwise
+interact directly with memory, `Instruction`s do that.  Everything else is
+useful to you in the debugger when you actually want to change things.
+
+The Human Resource Machine also implements "indirect" memory access, so, for
+instance, if memory tile 5 contains 74, you can get and set the value in
+memory tile 74 _through_ tile 5, like so:
+
+    >>> m.get('index')
+    74
+    >>> m.set('index', 'C', indirect=True)
+    >>> m[74]
+    'C'
+    >>> m.get('index', indirect=True)
+    'C'
+
+Trying to indirect through a letter raises an exception, even if you happen to
+have labeled a tile with that letter.  Sorry, but that's how the game works.
+Example:
+
+    >>> m.get(74, indirect=True)
+    Traceback (most recent call last):
+        ...
+    hrmulator.Memory.CantIndirectThroughLetter: A letter does not address any tile.
+
+The only things you can put onto a memory tile are integers and characters.
+
+    >>> m['index'] = 3.14
+    Traceback (most recent call last):
+        ...
+    hrmulator.Memory.CantStoreBadType: A memory tile may only hold an integer or a single character.
+
+You are not allowed to read from an empty tile.  Sorry, but again---that's how
+the game works:
+
+    >>> m[3]
+    Traceback (most recent call last):
+        ...
+    hrmulator.Memory.MemoryTileIsEmptyError: (3, 'Tile 3 is empty.')
+
+Of course I don't support slices.
 """
 
 
@@ -211,3 +245,8 @@ class Memory:
                 print_one(index)
         else:
             print_one(key)
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
