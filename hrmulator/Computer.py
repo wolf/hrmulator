@@ -3,8 +3,6 @@ A very simple computer that executes programs assembled from instances of the
 instructions implemented in Instructions.py.  Running such programs is easy,
 the trouble we go to is in printing everything (and using a little color).
 """
-
-
 from collections import defaultdict, deque
 
 import colorama

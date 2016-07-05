@@ -70,8 +70,6 @@ the game works:
 
 Of course I don't support slices.
 """
-
-
 from collections import defaultdict, OrderedDict
 
 import termcolor
