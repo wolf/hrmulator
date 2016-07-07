@@ -1,4 +1,5 @@
 from collections import deque
+import os
 import readline
 import re
 
@@ -21,6 +22,13 @@ class Debugger(Computer):
         # self.program.  They number from 0, so they match the program_counter.
         self.breakpoints = set({})
         self.temporary_breakpoints = {0}
+
+        home = os.path.expanduser('~')
+        self.history_file = os.path.join(home, '.hrmulatorhistory')
+        try:
+            readline.read_history_file(self.history_file)
+        except FileNotFoundError:
+            pass
 
     def _print_line(self, step_number, instruction):
         """
@@ -225,6 +233,7 @@ Commands:
             print('Program ran to completion.  Post-mortem:')
             self._menu()
         self.program_counter = None
+        readline.write_history_file(self.history_file)
 
     def print_run_program(self, *,
             program_path=None,
