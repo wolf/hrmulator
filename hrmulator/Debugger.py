@@ -38,7 +38,6 @@ class Debugger(Computer):
         In our case, we want to show breakpoints, and color breakpointed
         addresses red.
         """
-
         # `step_number` here comes from `print_program` so it's off-by-one for the user
         is_breakpoint = step_number-1 in self.breakpoints
         print("  {}{}{}{:03d}{}: {}".format(
@@ -71,18 +70,18 @@ class Debugger(Computer):
             command = input('\ndebug> ')
 
             if command == 'a':
-                ###
-                ### accumulator
-                ###
+                #
+                # accumulator
+                #
                 print('\naccumulator: ', end='')
                 if is_char(self.accumulator):
                     print("'{}'".format(self.accumulator))
                 else:
                     print(self.accumulator)
             elif command.startswith('b'):
-                ###
-                ### breakpoint
-                ###
+                #
+                # breakpoint
+                #
                 match = re.match(self.command_with_argument_re, command)
                 if match is None:
                     place = self.program_counter
@@ -101,14 +100,14 @@ class Debugger(Computer):
                 else:
                     self.breakpoints.add(place)
             elif command == 'c':
-                ###
-                ### continue
-                ###
+                #
+                # continue
+                #
                 return False
             elif command == 'e':
-                ###
-                ### everything
-                ###
+                #
+                # everything
+                #
                 print('\ninbox: ', end='')
                 printable_inbox = list(self.inbox or [])
                 print(printable_inbox, end='')
@@ -120,16 +119,16 @@ class Debugger(Computer):
                 print('; outbox: ', end='')
                 print(self.outbox)
             elif command == 'i':
-                ###
-                ### inbox
-                ###
+                #
+                # inbox
+                #
                 print('\ninbox: ', end='')
                 printable_inbox = list(self.inbox or [])
                 print(printable_inbox)
             elif command.startswith('l'):
-                ###
-                ### list
-                ###
+                #
+                # list
+                #
                 match = re.match(self.command_with_argument_re, command)
                 if match is None:
                     slice_to_print = None
@@ -142,9 +141,9 @@ class Debugger(Computer):
                 self.print_program(slice_to_print)
                 ok_to_print_one_line = False
             elif command.startswith('m'):
-                ###
-                ### memory
-                ###
+                #
+                # memory
+                #
                 match = re.match(self.command_with_argument_re, command)
                 print()
                 if match is None:
@@ -152,28 +151,28 @@ class Debugger(Computer):
                 else:
                     self.memory.debug_print(match.group(1))
             elif command == 'o':
-                ###
-                ### outbox
-                ###
+                #
+                # outbox
+                #
                 print('\noutbox: ', end='')
                 print(self.outbox)
             elif command == 'q':
-                ###
-                ### quit
-                ###
+                #
+                # quit
+                #
                 return True
             elif command == 'r':
-                ###
-                ### restart
-                ###
+                #
+                # restart
+                #
                 self.program_counter = 0
                 self.set_inbox(self.original_inbox)
                 self.outbox = []
                 self.accumulator = None
             elif command == 's':
-                ###
-                ### step
-                ###
+                #
+                # step
+                #
                 ins = self.program[self.program_counter]
                 if isinstance(ins, Jump):
                     # if it's a jump of any kind, break at the jump destination
@@ -183,16 +182,16 @@ class Debugger(Computer):
                     self.temporary_breakpoints.add(self.program_counter+1)
                 break
             elif command.startswith('x'):
-                ###
-                ### execute
-                ###
+                #
+                # execute
+                #
                 match = re.match(self.execute_command_re, command)
                 if match is not None:
                     exec(match.group(1), globals(), locals())
             elif command == '?':
-                ###
-                ### help
-                ###
+                #
+                # help
+                #
                 print("""
 Commands:
   a - print the accumulator: the value you are currently holding
