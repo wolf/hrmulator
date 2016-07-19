@@ -4,4 +4,5 @@ __pycache__/
 *.egg-info
 *.egg
 *.eggs
+*.swp
 .DS_Store
