@@ -116,13 +116,13 @@ class Memory:
 
     def __init__(self, labels=None, values=None):
         self.label_map = OrderedDict(labels or [])
-            # label_map maps string label to integer tile-index.  Using
-            # OrderedDict here ensures that debug_print will print multiple
-            # labels on the same tile in the order which they were applied.
-            # Yeah, I realize it's a ridiculous edge case.
+        # label_map maps string label to integer tile-index.  Using
+        # OrderedDict here ensures that debug_print will print multiple
+        # labels on the same tile in the order which they were applied.
+        # Yeah, I realize it's a ridiculous edge case.
 
         self.tiles = {}
-            # the tiles themselves are sparse, so use a dictionary
+        # the tiles themselves are sparse, so use a dictionary
 
         if values is not None:
             for k, v in values.items():

@@ -48,12 +48,12 @@ class Assembler:
     """
 
     comment_re = re.compile('(.*)#.*')
-        # keep anything to the left of the comment marker
+    # keep anything to the left of the comment marker
 
     label_re = re.compile('(\w+):')
     instruction_with_arg_re = re.compile('(\w+)\s+(\w+)$')
     indirect_tile_instruction_re = re.compile('(\w+)\s+\[(\w+)\]$')
-        # Note tile index is made of word characters not necessarily digits.
+    # Note tile index is made of word characters not necessarily digits.
 
     instruction_re = re.compile('(\w+)$')
 
@@ -80,15 +80,15 @@ class Assembler:
         program = []
 
         jump_table = OrderedDict()
-            # Maps labels to step numbers, 0-based, like program itself and
-            # the program_counter.  We save the labels instead of resolving
-            # them immediately to step numbers in the instructions because
-            # we want to print them when we print the program.  Both the label
-            # itself, and where it's the argument to a jump instruction.
+        # Maps labels to step numbers, 0-based, like program itself and
+        # the program_counter.  We save the labels instead of resolving
+        # them immediately to step numbers in the instructions because
+        # we want to print them when we print the program.  Both the label
+        # itself, and where it's the argument to a jump instruction.
 
-            # Using an OrderedDict here makes the labels print in the right
-            # order when there are multiple labels at the same point.  Edge
-            # case, I know.
+        # Using an OrderedDict here makes the labels print in the right
+        # order when there are multiple labels at the same point.  Edge
+        # case, I know.
 
         step = 0
         line_number = 0 # ...for error reporting; 1-based like your editor.
