@@ -53,7 +53,7 @@ Example:
         ...
     hrmulator.Memory.CantIndirectThroughLetter: A letter does not address any tile.
 
-The only things you can put onto a memory tile are integers and characters.
+The only things you can put onto a memory tile are integers and single characters (letters).
 
     >>> m['index'] = 3.14
     Traceback (most recent call last):
@@ -68,7 +68,7 @@ the game works:
         ...
     hrmulator.Memory.MemoryTileIsEmptyError: (3, 'Tile 3 is empty.')
 
-Of course I don't support slices.
+Of course I don't support slices.  The game doesn't use them, so I don't need them.
 """
 from collections import defaultdict, OrderedDict
 
