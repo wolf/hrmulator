@@ -91,7 +91,7 @@ class Assembler:
         # case, I know.
 
         step = 0
-        line_number = 0 # ...for error reporting; 1-based like your editor.
+        line_number = 0     # ...for error reporting; 1-based like your editor.
         for line in lines:
             line_number += 1
 
