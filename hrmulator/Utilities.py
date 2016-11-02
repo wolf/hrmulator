@@ -41,17 +41,22 @@ Memory._resolve_key.
     >>> int_if_possible(51.2)
     51.2
 """
-def is_char(value):
+
+
+from typing import Any
+
+
+def is_char(value: Any) -> bool:
     """Return True for strings of length 1."""
     return type(value)==str and len(value)==1
 
 
-def is_int_or_char(value):
+def is_int_or_char(value: Any) -> bool:
     """Return True if the value is suitable for putting on a memory tile."""
     return type(value)==int or is_char(value)
 
 
-def int_if_possible(value):
+def int_if_possible(value: Any) -> Any:
     """
     Convert an int or a str to an int.  Do not convert any other types.
 
