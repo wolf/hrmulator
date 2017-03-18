@@ -6,7 +6,6 @@ import re
 import colorama
 
 from .Computer import Computer
-from .Memory import Memory
 from .Instructions import InboxIsEmptyError, Jump
 from .Utilities import is_char
 
