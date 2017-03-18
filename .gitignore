@@ -1,11 +1,12 @@
-__pycache__/
-/dist/
-/.idea/
-*.pyc
-*.egg-info
 *.egg
+*.egg-info
 *.eggs
+*.iml
+*.pyc
 *.swp
 .DS_Store
+/.idea/
+/dist/
+__pycache__/
 tags
 
