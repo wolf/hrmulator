@@ -119,7 +119,7 @@ c.print_run_program(
     inbox=[2, 4, 0, 0, 4, 0],
     memory=Memory(labels={'sum':0, 'zero':5}, values={'zero':0})
 )
-assert(c.outbox == [6, 0, 4])
+assert c.outbox == [6, 0, 4]
 ```
 
 You can actually do it all within the `print_run_program` call:
@@ -152,7 +152,7 @@ c.print_run_program(
             move_to_outbox
             jump_to START"""
 )
-assert(c.outbox == [6, 0, 4])
+assert c.outbox == [6, 0, 4]
 ```
 
 For some fun, replace the instantiation of `Computer()` with `Debugger()`.  That will load up the program in the debugger, stop at address `0`, and give you a `debug> ` prompt.  From there you can single-step, print the contents of memory, look at the accumulator, set and clear breakpoints, etc.
