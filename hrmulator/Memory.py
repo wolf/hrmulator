@@ -86,15 +86,15 @@ class MemoryTileIsEmptyError(MemoryError):
 
 
 class CantIndirectThroughLetter(MemoryError):
-
     def __init__(self):
-        super().__init__('A letter does not address any tile.')
+        super().__init__("A letter does not address any tile.")
 
 
 class CantStoreBadType(MemoryError):
-
     def __init__(self):
-        super().__init__('A memory tile may only hold an integer or a single character.')
+        super().__init__(
+            "A memory tile may only hold an integer or a single character."
+        )
 
 
 class Memory:
@@ -126,7 +126,7 @@ class Memory:
 
         if values is not None:
             for k, v in values.items():
-                self.__setitem__(k, v) # ensures we resolve initial labels
+                self.__setitem__(k, v)  # ensures we resolve initial labels
 
     def _resolve_key(self, key):
         """
@@ -137,11 +137,11 @@ class Memory:
             _resolve_key('a_label_for_tile_7') == 7
                                         # looks up labels
         """
-        key = int_if_possible(key) # don't be fooled, '24' is not a label
+        key = int_if_possible(key)  # don't be fooled, '24' is not a label
         key = self.label_map.get(key, key)
         if type(key) is not int:
-            raise KeyError(key,
-                'The label "{}" has not been applied to any tile.'.format(key)
+            raise KeyError(
+                key, 'The label "{}" has not been applied to any tile.'.format(key)
             )
         return key
 
@@ -153,7 +153,7 @@ class Memory:
         """A convenience method, [] for when access is not indirect."""
         value = self.tiles.get(self._resolve_key(key), None)
         if value is None:
-            raise MemoryTileIsEmptyError(key, 'Tile {} is empty.'.format(key))
+            raise MemoryTileIsEmptyError(key, "Tile {} is empty.".format(key))
         return value
 
     def get(self, key, *, indirect=False):
@@ -212,23 +212,23 @@ class Memory:
         def print_one(key):
             """Pretty-print a single key, its labels if any, and its value."""
             key = self._resolve_key(key)
-            key_str = termcolor.colored('{:2d}'.format(key), 'blue')
+            key_str = termcolor.colored("{:2d}".format(key), "blue")
             # print tile keys in color, just like in the program listing
-            print(key_str, end='')
+            print(key_str, end="")
 
-            if key in labels: # are there any labels for this index?
-                separator = ''
-                print('(', end='')
+            if key in labels:  # are there any labels for this index?
+                separator = ""
+                print("(", end="")
                 for label in labels[key]:
-                    print(separator, end='')
-                    separator = ', '
-                    print(termcolor.colored(label, 'blue'), end='')
-                print(')', end='')
-            print(': ', end='')
+                    print(separator, end="")
+                    separator = ", "
+                    print(termcolor.colored(label, "blue"), end="")
+                print(")", end="")
+            print(": ", end="")
             try:
                 value = self.tiles[key]
             except KeyError:
-                print(termcolor.colored('empty', 'red'))
+                print(termcolor.colored("empty", "red"))
             else:
                 if is_char(value):
                     print("'{}'".format(value))
@@ -245,6 +245,7 @@ class Memory:
             print_one(key)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

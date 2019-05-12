@@ -4,7 +4,6 @@ import hrmulator
 
 
 class TestComputer(TestCase):
-
     def setUp(self):
         self.computer = hrmulator.Computer()
 

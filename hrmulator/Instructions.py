@@ -52,6 +52,7 @@ class NoSuchJumpDestinationError(InstructionError):
 
 class AbstractInstruction:
     """Base class for all instructions."""
+
     has_argument = False
 
     def __str__(self):
@@ -62,7 +63,7 @@ class AbstractInstruction:
 
     def _assertAccumulatorIsNotEmpty(self, computer):
         if computer.accumulator is None:
-            raise AccumulatorIsEmptyError('The accumulator is empty.')
+            raise AccumulatorIsEmptyError("The accumulator is empty.")
 
 
 class NoOp(AbstractInstruction):
@@ -71,6 +72,7 @@ class NoOp(AbstractInstruction):
 
     Counts as a step executed when evaluating the optimization challenges.
     """
+
     symbol = "no_op"
 
     def execute(self, computer):
@@ -89,11 +91,12 @@ class MoveFromInbox(AbstractInstruction):
 
     MoveFromInbox expects computer.inbox to implement popleft(), as deque does.
     """
+
     symbol = "move_from_inbox"
 
     def execute(self, computer):
         if computer.inbox is None or not len(computer.inbox):
-            raise InboxIsEmptyError('The inbox is empty.')
+            raise InboxIsEmptyError("The inbox is empty.")
         computer.accumulator = computer.inbox.popleft()
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -122,7 +125,7 @@ class AbstractTileInstruction(AbstractInstruction):
         return s.format(self.symbol, self.tile_index)
 
     def colored_str(self):
-        tile_str = termcolor.colored(str(self.tile_index), 'blue')
+        tile_str = termcolor.colored(str(self.tile_index), "blue")
         s = "{} [{}]" if self.indirect else "{} {}"
         return s.format(self.symbol, tile_str)
 
@@ -131,7 +134,9 @@ class CopyFrom(AbstractTileInstruction):
     symbol = "copy_from"
 
     def execute(self, computer):
-        computer.accumulator = computer.memory.get(self.tile_index, indirect=self.indirect)
+        computer.accumulator = computer.memory.get(
+            self.tile_index, indirect=self.indirect
+        )
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -141,7 +146,9 @@ class CopyTo(AbstractTileInstruction):
 
     def execute(self, computer):
         self._assertAccumulatorIsNotEmpty(computer)
-        computer.memory.set(self.tile_index, computer.accumulator, indirect=self.indirect)
+        computer.memory.set(
+            self.tile_index, computer.accumulator, indirect=self.indirect
+        )
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -153,7 +160,9 @@ class Add(AbstractTileInstruction):
         self._assertAccumulatorIsNotEmpty(computer)
         value_to_add = computer.memory.get(self.tile_index, indirect=self.indirect)
         if is_char(value_to_add) or is_char(computer.accumulator):
-            raise IncompatibleTypesError("You can't add a letter.  What would that even mean?")
+            raise IncompatibleTypesError(
+                "You can't add a letter.  What would that even mean?"
+            )
         computer.accumulator += value_to_add
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -167,7 +176,9 @@ class Subtract(AbstractTileInstruction):
         value_to_subtract = computer.memory.get(self.tile_index, indirect=self.indirect)
         value_to_subtract_is_char = is_char(value_to_subtract)
         if value_to_subtract_is_char != is_char(computer.accumulator):
-            raise IncompatibleTypesError("You can't subtract (from) a letter.  What would that even mean?")
+            raise IncompatibleTypesError(
+                "You can't subtract (from) a letter.  What would that even mean?"
+            )
         if value_to_subtract_is_char:
             value_to_subtract = ord(value_to_subtract)
             computer.accumulator = ord(computer.accumulator)
@@ -181,12 +192,15 @@ class BumpUp(AbstractTileInstruction):
     Increment the value in a given memory tile by 1, and copy it into the
     accumulator.
     """
+
     symbol = "bump_up"
 
     def execute(self, computer):
         value = computer.memory.get(self.tile_index, indirect=self.indirect)
         if is_char(value):
-            raise IncompatibleTypesError("You can't add to a letter.  What would that even mean?")
+            raise IncompatibleTypesError(
+                "You can't add to a letter.  What would that even mean?"
+            )
         value += 1
         computer.memory.set(self.tile_index, value, indirect=self.indirect)
         computer.accumulator = value
@@ -199,12 +213,15 @@ class BumpDown(AbstractTileInstruction):
     Decrement the value in a given memory tile by 1, and copy it into the
     accumulator.
     """
+
     symbol = "bump_down"
 
     def execute(self, computer):
         value = computer.memory.get(self.tile_index, indirect=self.indirect)
         if is_char(value):
-            raise IncompatibleTypesError("You can't subtract from a letter.  What would that even mean?")
+            raise IncompatibleTypesError(
+                "You can't subtract from a letter.  What would that even mean?"
+            )
         value -= 1
         computer.memory.set(self.tile_index, value, indirect=self.indirect)
         computer.accumulator = value
@@ -214,6 +231,7 @@ class BumpDown(AbstractTileInstruction):
 
 class Jump(AbstractInstruction):
     """Jump (unconditionally) to the supplied program step."""
+
     symbol = "jump_to"
     has_argument = True
 
@@ -225,7 +243,7 @@ class Jump(AbstractInstruction):
                 self.symbol,
                 colorama.Fore.GREEN,
                 self.destination_pc,
-                colorama.Style.RESET_ALL
+                colorama.Style.RESET_ALL,
             )
         return result
 
@@ -237,12 +255,13 @@ class Jump(AbstractInstruction):
         if result in computer.jump_table:
             result = computer.jump_table[result]
         if type(result) is not int:
-            raise NoSuchJumpDestinationError(result,
-                'The label "{}" does not appear in the program.'.format(result)
+            raise NoSuchJumpDestinationError(
+                result, 'The label "{}" does not appear in the program.'.format(result)
             )
-        elif not 0<=result<len(computer.program):
-            raise NoSuchJumpDestinationError(result,
-                'Step number {} is outside the range of the program.'.format(result)
+        elif not 0 <= result < len(computer.program):
+            raise NoSuchJumpDestinationError(
+                result,
+                "Step number {} is outside the range of the program.".format(result),
             )
         return result
 
@@ -255,6 +274,7 @@ class JumpIfZero(Jump):
     """
     Jump if and only if the accumulator == 0 to the supplied program step.
     """
+
     symbol = "jump_if_zero_to"
 
     def execute(self, computer):
@@ -274,6 +294,7 @@ class JumpIfNegative(Jump):
     Note: it is a fatal error if the value in the accumulator is not
     comparable to zero.
     """
+
     symbol = "jump_if_negative_to"
 
     def execute(self, computer):
@@ -297,5 +318,5 @@ INSTRUCTION_CATALOG = [
     BumpDown,
     Jump,
     JumpIfZero,
-    JumpIfNegative
+    JumpIfNegative,
 ]

@@ -22,10 +22,11 @@ FINISH:
     jump_to START
 """
 
+
 class TestIntegration003(TestCase):
     def test_maximization_room(self):
         computer = Computer()
-        computer.memory = Memory(labels={'A':0, 'B':1})
+        computer.memory = Memory(labels={"A": 0, "B": 1})
         computer.set_inbox([3, 8, -9, -3, 2, 2, 4, -9])
         computer.load_program(program_text=program_text)
         computer.run()

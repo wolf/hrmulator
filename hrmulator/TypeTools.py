@@ -48,12 +48,12 @@ from typing import Any
 
 def is_char(value: Any) -> bool:
     """Return True for strings of length 1."""
-    return type(value)==str and len(value)==1
+    return type(value) == str and len(value) == 1
 
 
 def is_int_or_char(value: Any) -> bool:
     """Return True if the value is suitable for putting on a memory tile."""
-    return type(value)==int or is_char(value)
+    return type(value) == int or is_char(value)
 
 
 def int_if_possible(value: Any) -> Any:
@@ -64,7 +64,7 @@ def int_if_possible(value: Any) -> Any:
     value in question came from `input()`.
     """
     try:
-        if type(value)==str:
+        if type(value) == str:
             return int(value)
     except ValueError:
         pass

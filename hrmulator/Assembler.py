@@ -10,27 +10,23 @@ class AssemblerError(Exception):
         self.text = text
 
     def __str__(self):
-        return '{}, line {}: "{}"'.format(
-            self.description,
-            self.line_number,
-            self.text
-        )
+        return '{}, line {}: "{}"'.format(self.description, self.line_number, self.text)
 
 
 class ArgumentRequiredError(AssemblerError):
-    description = 'Instruction requires argument'
+    description = "Instruction requires argument"
 
 
 class UnexpectedArgumentError(AssemblerError):
-    description = 'Unexpected argument'
+    description = "Unexpected argument"
 
 
 class UnknownInstructionError(AssemblerError):
-    description = 'Unknown instruction'
+    description = "Unknown instruction"
 
 
 class SyntaxError(AssemblerError):
-    description = 'Syntax error'
+    description = "Syntax error"
 
 
 class Assembler:
@@ -47,15 +43,15 @@ class Assembler:
     program itself, and the jump table referring into it.
     """
 
-    comment_re = re.compile('(.*)#.*')
+    comment_re = re.compile("(.*)#.*")
     # keep anything to the left of the comment marker
 
-    label_re = re.compile('(\w+):')
-    instruction_with_arg_re = re.compile('(\w+)\s+(\w+)$')
-    indirect_tile_instruction_re = re.compile('(\w+)\s+\[(\w+)\]$')
+    label_re = re.compile("(\w+):")
+    instruction_with_arg_re = re.compile("(\w+)\s+(\w+)$")
+    indirect_tile_instruction_re = re.compile("(\w+)\s+\[(\w+)\]$")
     # Note tile index is made of word characters not necessarily digits.
 
-    instruction_re = re.compile('(\w+)$')
+    instruction_re = re.compile("(\w+)$")
 
     def __init__(self):
         """
@@ -66,13 +62,13 @@ class Assembler:
 
     def assemble_program_file(self, path):
         """...when your HRM program lives in the file-system."""
-        with open(path, 'r') as infile:
+        with open(path, "r") as infile:
             lines = infile.readlines()
         return self._assemble_program(lines)
 
     def assemble_program_text(self, text):
         """...when your HRM program is provided inline."""
-        lines = text.split('\n')
+        lines = text.split("\n")
         return self._assemble_program(lines)
 
     def _assemble_program(self, lines):
@@ -91,7 +87,7 @@ class Assembler:
         # case, I know.
 
         step = 0
-        line_number = 0     # ...for error reporting; 1-based like your editor.
+        line_number = 0 # ...for error reporting; 1-based like your editor.
         for line in lines:
             line_number += 1
 

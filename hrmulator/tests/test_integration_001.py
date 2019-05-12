@@ -24,10 +24,11 @@ DIFFERENT:
     jump_to FINISH
 """
 
+
 class TestIntegration001(TestCase):
     def test_exclusive_lounge(self):
         computer = Computer()
-        computer.memory = Memory(values={4:0, 5:1})
+        computer.memory = Memory(values={4: 0, 5: 1})
         computer.set_inbox([-2, -8, 3, -5, -3, 7, 4, 3])
         computer.load_program(program_text=program_text)
         computer.run()

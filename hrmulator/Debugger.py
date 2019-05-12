@@ -12,8 +12,8 @@ from .TypeTools import is_char
 
 class Debugger(Computer):
 
-    command_with_argument_re = re.compile('^[a-z]\s*(\w+)$')
-    execute_command_re = re.compile('^x\s+(.*)$')
+    command_with_argument_re = re.compile("^[a-z]\s*(\w+)$")
+    execute_command_re = re.compile("^x\s+(.*)$")
 
     def __init__(self):
         super().__init__()
@@ -22,8 +22,8 @@ class Debugger(Computer):
         self.breakpoints = set({})
         self.temporary_breakpoints = {0}
 
-        home = os.path.expanduser('~')
-        self.history_file = os.path.join(home, '.hrmulatorhistory')
+        home = os.path.expanduser("~")
+        self.history_file = os.path.join(home, ".hrmulatorhistory")
         try:
             readline.read_history_file(self.history_file)
         except FileNotFoundError:
@@ -38,22 +38,23 @@ class Debugger(Computer):
         addresses red.
         """
         # `step_number` here comes from `print_program` so it's off-by-one for the user
-        is_breakpoint = step_number-1 in self.breakpoints
-        print("  {}{}{}{:03d}{}: {}".format(
-            '!' if is_breakpoint else ' ',
-            '@' if step_number-1 == self.program_counter else ' ',  # avoid doing math on None
-            colorama.Fore.RED if is_breakpoint else colorama.Style.DIM,
-            step_number,
-            colorama.Style.RESET_ALL,
-            instruction.colored_str()))
+        is_breakpoint = step_number - 1 in self.breakpoints
+        print(
+            "  {}{}{}{:03d}{}: {}".format(
+                "!" if is_breakpoint else " ",
+                "@"
+                if step_number - 1 == self.program_counter
+                else " ",  # avoid doing math on None
+                colorama.Fore.RED if is_breakpoint else colorama.Style.DIM,
+                step_number,
+                colorama.Style.RESET_ALL,
+                instruction.colored_str(),
+            )
+        )
 
     def _print_label(self, step_number, label):
-        if step_number-1 in self.breakpoints:
-            print('{}{}{}:'.format(
-                colorama.Fore.RED,
-                label,
-                colorama.Style.RESET_ALL
-            ))
+        if step_number - 1 in self.breakpoints:
+            print("{}{}{}:".format(colorama.Fore.RED, label, colorama.Style.RESET_ALL))
         else:
             super()._print_label(step_number, label)
 
@@ -63,21 +64,23 @@ class Debugger(Computer):
         while True:
             if ok_to_print_one_line:
                 print()
-                self.print_program(slice(self.program_counter, self.program_counter+1))
+                self.print_program(
+                    slice(self.program_counter, self.program_counter + 1)
+                )
             ok_to_print_one_line = True
 
-            command = input('\ndebug> ')
+            command = input("\ndebug> ")
 
-            if command == 'a':
+            if command == "a":
                 #
                 # accumulator
                 #
-                print('\naccumulator: ', end='')
+                print("\naccumulator: ", end="")
                 if is_char(self.accumulator):
                     print("'{}'".format(self.accumulator))
                 else:
                     print(self.accumulator)
-            elif command.startswith('b'):
+            elif command.startswith("b"):
                 #
                 # breakpoint
                 #
@@ -93,38 +96,38 @@ class Debugger(Computer):
                 elif match is not None:
                     # remember, print_program numbers from 1, so if the user
                     # typed a number here, it is off-by-one; fix it
-                    place = int(place)-1
+                    place = int(place) - 1
                 if place in self.breakpoints:
                     self.breakpoints.remove(place)
                 else:
                     self.breakpoints.add(place)
-            elif command == 'c':
+            elif command == "c":
                 #
                 # continue
                 #
                 return False
-            elif command == 'e':
+            elif command == "e":
                 #
                 # everything
                 #
-                print('\ninbox: ', end='')
+                print("\ninbox: ", end="")
                 printable_inbox = list(self.inbox or [])
-                print(printable_inbox, end='')
+                print(printable_inbox, end="")
                 if is_char(self.accumulator):
                     format_str = "; accumulator: '{}'"
                 else:
                     format_str = "; accumulator: {}"
-                print(format_str.format(self.accumulator), end='')
-                print('; outbox: ', end='')
+                print(format_str.format(self.accumulator), end="")
+                print("; outbox: ", end="")
                 print(self.outbox)
-            elif command == 'i':
+            elif command == "i":
                 #
                 # inbox
                 #
-                print('\ninbox: ', end='')
+                print("\ninbox: ", end="")
                 printable_inbox = list(self.inbox or [])
                 print(printable_inbox)
-            elif command.startswith('l'):
+            elif command.startswith("l"):
                 #
                 # list
                 #
@@ -133,13 +136,12 @@ class Debugger(Computer):
                     slice_to_print = None
                 else:
                     slice_to_print = slice(
-                        self.program_counter,
-                        self.program_counter + int(match.group(1))
+                        self.program_counter, self.program_counter + int(match.group(1))
                     )
                 print()
                 self.print_program(slice_to_print)
                 ok_to_print_one_line = False
-            elif command.startswith('m'):
+            elif command.startswith("m"):
                 #
                 # memory
                 #
@@ -149,18 +151,18 @@ class Debugger(Computer):
                     self.memory.debug_print()
                 else:
                     self.memory.debug_print(match.group(1))
-            elif command == 'o':
+            elif command == "o":
                 #
                 # outbox
                 #
-                print('\noutbox: ', end='')
+                print("\noutbox: ", end="")
                 print(self.outbox)
-            elif command == 'q':
+            elif command == "q":
                 #
                 # quit
                 #
                 return True
-            elif command == 'r':
+            elif command == "r":
                 #
                 # restart
                 #
@@ -168,7 +170,7 @@ class Debugger(Computer):
                 self.set_inbox(self.original_inbox)
                 self.outbox = []
                 self.accumulator = None
-            elif command == 's':
+            elif command == "s":
                 #
                 # step
                 #
@@ -178,20 +180,21 @@ class Debugger(Computer):
                     self.temporary_breakpoints.add(ins._lookup_destination(self))
                 if type(ins) is not Jump:
                     # if it's not an unconditional jump, break before the next instruction
-                    self.temporary_breakpoints.add(self.program_counter+1)
+                    self.temporary_breakpoints.add(self.program_counter + 1)
                 break
-            elif command.startswith('x'):
+            elif command.startswith("x"):
                 #
                 # execute
                 #
                 match = re.match(self.execute_command_re, command)
                 if match is not None:
                     exec(match.group(1), globals(), locals())
-            elif command == '?':
+            elif command == "?":
                 #
                 # help
                 #
-                print("""
+                print(
+                    """
 Commands:
   a - print the accumulator: the value you are currently holding
   b <number> - set or clear a breakpoint at step <number>
@@ -207,7 +210,8 @@ Commands:
   r - restart the program from the beginning, resetting the inbox and outbox
   s - step
   x <python> - execute some python, e.g., to label or set memory, or change the inbox
-  ? - this help message""")
+  ? - this help message"""
+                )
         return False
 
     def run(self):
@@ -220,7 +224,9 @@ Commands:
         escape = False
         try:
             while self.program_counter < len(self.program) and not escape:
-                if self.program_counter in self.breakpoints.union(self.temporary_breakpoints):
+                if self.program_counter in self.breakpoints.union(
+                    self.temporary_breakpoints
+                ):
                     self.temporary_breakpoints = set()
                     escape = self._menu()
                 self.program[self.program_counter].execute(self)
@@ -228,19 +234,18 @@ Commands:
             pass
         if not escape:
             print()
-            print('Program ran to completion.  Post-mortem:')
+            print("Program ran to completion.  Post-mortem:")
             self._menu()
         self.program_counter = None
         readline.write_history_file(self.history_file)
 
-    def print_run_program(self, *,
-            program_path=None,
-            program_text=None,
-            inbox=None,
-            memory=None):
+    def print_run_program(
+        self, *, program_path=None, program_text=None, inbox=None, memory=None
+    ):
         self.program_counter = 0
         super().print_run_program(
             program_path=program_path,
             program_text=program_text,
             inbox=inbox,
-            memory=memory)
+            memory=memory,
+        )

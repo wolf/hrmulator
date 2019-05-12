@@ -3,15 +3,10 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 import hrmulator
-from hrmulator.Memory import (
-    Memory,
-    MemoryTileIsEmptyError,
-    CantIndirectThroughLetter
-)
+from hrmulator.Memory import Memory, MemoryTileIsEmptyError, CantIndirectThroughLetter
 
 
 class TestInstructions(TestCase):
-
     def setUp(self):
         self.computer = Mock()
         self.computer.memory = Memory()
@@ -74,7 +69,7 @@ class TestInstructions(TestCase):
         self.assertEqual(self.computer.total_steps_executed, 1)
 
     def test_copy_from_indirect_through_letter(self):
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         copy_from = hrmulator.Instructions.CopyFrom(0, indirect=True)
         with self.assertRaises(CantIndirectThroughLetter):
             copy_from.execute(self.computer)
@@ -83,26 +78,26 @@ class TestInstructions(TestCase):
         copy_to = hrmulator.Instructions.CopyTo(0)
         with self.assertRaises(hrmulator.Instructions.AccumulatorIsEmptyError):
             copy_to.execute(self.computer)
-        copy_to = hrmulator.Instructions.CopyTo('hello')
+        copy_to = hrmulator.Instructions.CopyTo("hello")
         self.computer.accumulator = 74
         with self.assertRaises(KeyError):
             copy_to.execute(self.computer)
-        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory.label_tile(0, "hello")
         copy_to.execute(self.computer)
-        self.assertEqual(self.computer.memory['hello'], 74)
+        self.assertEqual(self.computer.memory["hello"], 74)
         self.assertEqual(self.computer.accumulator, 74)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
     def test_copy_to_indirect(self):
-        copy_to = hrmulator.Instructions.CopyTo('hello', indirect=True)
+        copy_to = hrmulator.Instructions.CopyTo("hello", indirect=True)
         self.computer.accumulator = 0
-        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory.label_tile(0, "hello")
         with self.assertRaises(MemoryTileIsEmptyError):
             copy_to.execute(self.computer)
-        self.computer.memory['hello'] = 74
+        self.computer.memory["hello"] = 74
         copy_to.execute(self.computer)
-        self.assertEqual(self.computer.memory['hello'], 74)
+        self.assertEqual(self.computer.memory["hello"], 74)
         self.assertEqual(self.computer.memory[74], 0)
         self.assertEqual(self.computer.accumulator, 0)
         self.assertEqual(self.computer.program_counter, 1)
@@ -110,7 +105,7 @@ class TestInstructions(TestCase):
 
     def test_copy_to_indirect_through_letter(self):
         self.computer.accumulator = 74
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         copy_to = hrmulator.Instructions.CopyTo(0, indirect=True)
         with self.assertRaises(CantIndirectThroughLetter):
             copy_to.execute(self.computer)
@@ -119,14 +114,14 @@ class TestInstructions(TestCase):
         add = hrmulator.Instructions.Add(0)
         with self.assertRaises(hrmulator.Instructions.AccumulatorIsEmptyError):
             add.execute(self.computer)
-        add = hrmulator.Instructions.Add('hello')
+        add = hrmulator.Instructions.Add("hello")
         self.computer.accumulator = 74
         with self.assertRaises(KeyError):
             add.execute(self.computer)
-        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory.label_tile(0, "hello")
         with self.assertRaises(MemoryTileIsEmptyError):
             add.execute(self.computer)
-        self.computer.memory['hello'] = 74
+        self.computer.memory["hello"] = 74
         add.execute(self.computer)
         self.assertEqual(self.computer.accumulator, 148)
         self.assertEqual(self.computer.program_counter, 1)
@@ -134,16 +129,16 @@ class TestInstructions(TestCase):
 
     def test_add_incompatible_types(self):
         add = hrmulator.Instructions.Add(0)
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         self.computer.accumulator = 74
         with self.assertRaises(hrmulator.Instructions.IncompatibleTypesError):
             add.execute(self.computer)
 
     def test_add_indirect(self):
-        add = hrmulator.Instructions.Add('hello', indirect=True)
+        add = hrmulator.Instructions.Add("hello", indirect=True)
         self.computer.accumulator = 74
-        self.computer.memory.label_tile(0, 'hello')
-        self.computer.memory['hello'] = 2
+        self.computer.memory.label_tile(0, "hello")
+        self.computer.memory["hello"] = 2
         with self.assertRaises(MemoryTileIsEmptyError):
             add.execute(self.computer)
         self.computer.memory[2] = 26
@@ -154,7 +149,7 @@ class TestInstructions(TestCase):
 
     def test_add_indirect_through_letter(self):
         self.computer.accumulator = 74
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         add = hrmulator.Instructions.Add(0, indirect=True)
         with self.assertRaises(CantIndirectThroughLetter):
             add.execute(self.computer)
@@ -163,14 +158,14 @@ class TestInstructions(TestCase):
         subtract = hrmulator.Instructions.Subtract(0)
         with self.assertRaises(hrmulator.Instructions.AccumulatorIsEmptyError):
             subtract.execute(self.computer)
-        subtract = hrmulator.Instructions.Subtract('hello')
+        subtract = hrmulator.Instructions.Subtract("hello")
         self.computer.accumulator = 74
         with self.assertRaises(KeyError):
             subtract.execute(self.computer)
-        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory.label_tile(0, "hello")
         with self.assertRaises(MemoryTileIsEmptyError):
             subtract.execute(self.computer)
-        self.computer.memory['hello'] = 74
+        self.computer.memory["hello"] = 74
         subtract.execute(self.computer)
         self.assertEqual(self.computer.accumulator, 0)
         self.assertEqual(self.computer.program_counter, 1)
@@ -178,23 +173,23 @@ class TestInstructions(TestCase):
 
     def test_subtract_incompatible_types(self):
         subtract = hrmulator.Instructions.Subtract(0)
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         self.computer.accumulator = 74
         with self.assertRaises(hrmulator.Instructions.IncompatibleTypesError):
             subtract.execute(self.computer)
 
     def test_subtract_letters(self):
         subtract = hrmulator.Instructions.Subtract(0)
-        self.computer.memory[0] = 'A'
-        self.computer.accumulator = 'A'
+        self.computer.memory[0] = "A"
+        self.computer.accumulator = "A"
         subtract.execute(self.computer)
         self.assertEqual(self.computer.accumulator, 0)
 
     def test_subtract_indirect(self):
-        add = hrmulator.Instructions.Subtract('hello', indirect=True)
+        add = hrmulator.Instructions.Subtract("hello", indirect=True)
         self.computer.accumulator = 74
-        self.computer.memory.label_tile(0, 'hello')
-        self.computer.memory['hello'] = 2
+        self.computer.memory.label_tile(0, "hello")
+        self.computer.memory["hello"] = 2
         with self.assertRaises(MemoryTileIsEmptyError):
             add.execute(self.computer)
         self.computer.memory[2] = 26
@@ -205,36 +200,36 @@ class TestInstructions(TestCase):
 
     def test_subtract_indirect_through_letter(self):
         self.computer.accumulator = 74
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         subtract = hrmulator.Instructions.Subtract(0, indirect=True)
         with self.assertRaises(CantIndirectThroughLetter):
             subtract.execute(self.computer)
 
     def test_bump_up(self):
-        bump_up = hrmulator.Instructions.BumpUp('hello')
+        bump_up = hrmulator.Instructions.BumpUp("hello")
         with self.assertRaises(KeyError):
             bump_up.execute(self.computer)
-        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory.label_tile(0, "hello")
         with self.assertRaises(MemoryTileIsEmptyError):
             bump_up.execute(self.computer)
         self.computer.memory[0] = 74
         bump_up.execute(self.computer)
-        self.assertEqual(self.computer.memory['hello'], 75)
+        self.assertEqual(self.computer.memory["hello"], 75)
         self.assertEqual(self.computer.accumulator, 75)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
     def test_bump_up_incompatible_types(self):
         bump_up = hrmulator.Instructions.BumpUp(0)
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         with self.assertRaises(hrmulator.Instructions.IncompatibleTypesError):
             bump_up.execute(self.computer)
 
     def test_bump_up_indirect(self):
-        bump_up = hrmulator.Instructions.BumpUp('hello', indirect=True)
+        bump_up = hrmulator.Instructions.BumpUp("hello", indirect=True)
         with self.assertRaises(KeyError):
             bump_up.execute(self.computer)
-        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory.label_tile(0, "hello")
         with self.assertRaises(MemoryTileIsEmptyError):
             bump_up.execute(self.computer)
         self.computer.memory[0] = 74
@@ -242,43 +237,43 @@ class TestInstructions(TestCase):
             bump_up.execute(self.computer)
         self.computer.memory[74] = 5
         bump_up.execute(self.computer)
-        self.assertEqual(self.computer.memory['hello'], 74)
+        self.assertEqual(self.computer.memory["hello"], 74)
         self.assertEqual(self.computer.memory[74], 6)
         self.assertEqual(self.computer.accumulator, 6)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
     def test_bump_up_indirect_through_letter(self):
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         bump_up = hrmulator.Instructions.BumpUp(0, indirect=True)
         with self.assertRaises(CantIndirectThroughLetter):
             bump_up.execute(self.computer)
 
     def test_bump_down(self):
-        bump_down = hrmulator.Instructions.BumpDown('hello')
+        bump_down = hrmulator.Instructions.BumpDown("hello")
         with self.assertRaises(KeyError):
             bump_down.execute(self.computer)
-        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory.label_tile(0, "hello")
         with self.assertRaises(MemoryTileIsEmptyError):
             bump_down.execute(self.computer)
         self.computer.memory[0] = 74
         bump_down.execute(self.computer)
-        self.assertEqual(self.computer.memory['hello'], 73)
+        self.assertEqual(self.computer.memory["hello"], 73)
         self.assertEqual(self.computer.accumulator, 73)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
     def test_bump_down_incompatible_types(self):
         bump_down = hrmulator.Instructions.BumpDown(0)
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         with self.assertRaises(hrmulator.Instructions.IncompatibleTypesError):
             bump_down.execute(self.computer)
 
     def test_bump_down_indirect(self):
-        bump_up = hrmulator.Instructions.BumpDown('hello', indirect=True)
+        bump_up = hrmulator.Instructions.BumpDown("hello", indirect=True)
         with self.assertRaises(KeyError):
             bump_up.execute(self.computer)
-        self.computer.memory.label_tile(0, 'hello')
+        self.computer.memory.label_tile(0, "hello")
         with self.assertRaises(MemoryTileIsEmptyError):
             bump_up.execute(self.computer)
         self.computer.memory[0] = 74
@@ -286,14 +281,14 @@ class TestInstructions(TestCase):
             bump_up.execute(self.computer)
         self.computer.memory[74] = 5
         bump_up.execute(self.computer)
-        self.assertEqual(self.computer.memory['hello'], 74)
+        self.assertEqual(self.computer.memory["hello"], 74)
         self.assertEqual(self.computer.memory[74], 4)
         self.assertEqual(self.computer.accumulator, 4)
         self.assertEqual(self.computer.program_counter, 1)
         self.assertEqual(self.computer.total_steps_executed, 1)
 
     def test_bump_down_indirect_through_letter(self):
-        self.computer.memory[0] = 'A'
+        self.computer.memory[0] = "A"
         bump_down = hrmulator.Instructions.BumpDown(0, indirect=True)
         with self.assertRaises(CantIndirectThroughLetter):
             bump_down.execute(self.computer)
@@ -302,10 +297,10 @@ class TestInstructions(TestCase):
         jump_to = hrmulator.Instructions.Jump(0)
         with self.assertRaises(hrmulator.Instructions.NoSuchJumpDestinationError):
             jump_to.execute(self.computer)
-        jump_to = hrmulator.Instructions.Jump('hello')
+        jump_to = hrmulator.Instructions.Jump("hello")
         with self.assertRaises(hrmulator.Instructions.NoSuchJumpDestinationError):
             jump_to.execute(self.computer)
-        self.computer.jump_table['hello'] = 0
+        self.computer.jump_table["hello"] = 0
         self.computer.program.append(jump_to)
         jump_to.execute(self.computer)
         self.assertEqual(self.computer.program_counter, 0)
@@ -318,10 +313,10 @@ class TestInstructions(TestCase):
         self.computer.accumulator = 0
         with self.assertRaises(hrmulator.Instructions.NoSuchJumpDestinationError):
             jump_if_zero_to.execute(self.computer)
-        jump_if_zero_to = hrmulator.Instructions.JumpIfZero('hello')
+        jump_if_zero_to = hrmulator.Instructions.JumpIfZero("hello")
         with self.assertRaises(hrmulator.Instructions.NoSuchJumpDestinationError):
             jump_if_zero_to.execute(self.computer)
-        self.computer.jump_table['hello'] = 0
+        self.computer.jump_table["hello"] = 0
         self.computer.program.append(jump_if_zero_to)
         jump_if_zero_to.execute(self.computer)
         self.assertEqual(self.computer.program_counter, 0)
@@ -338,10 +333,10 @@ class TestInstructions(TestCase):
         self.computer.accumulator = -74
         with self.assertRaises(hrmulator.Instructions.NoSuchJumpDestinationError):
             jump_if_negative_to.execute(self.computer)
-        jump_if_negative_to = hrmulator.Instructions.JumpIfNegative('hello')
+        jump_if_negative_to = hrmulator.Instructions.JumpIfNegative("hello")
         with self.assertRaises(hrmulator.Instructions.NoSuchJumpDestinationError):
             jump_if_negative_to.execute(self.computer)
-        self.computer.jump_table['hello'] = 0
+        self.computer.jump_table["hello"] = 0
         self.computer.program.append(jump_if_negative_to)
         jump_if_negative_to.execute(self.computer)
         self.assertEqual(self.computer.program_counter, 0)

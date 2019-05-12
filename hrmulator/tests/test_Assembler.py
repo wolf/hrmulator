@@ -4,23 +4,22 @@ import hrmulator
 
 
 class TestAssembler(TestCase):
-
     def setUp(self):
         self.assembler = hrmulator.Assembler.Assembler()
 
     def test_assembles_correct_program(self):
-        good_assembly="""START:
+        good_assembly = """START:
             move_from_inbox
             move_to_outbox
             jump_to START"""
         program, jump_table = self.assembler.assemble_program_text(good_assembly)
         self.assertEqual(len(program), 3)
         self.assertEqual(len(jump_table), 1)
-        self.assertEqual(jump_table['START'], 0)
+        self.assertEqual(jump_table["START"], 0)
         self.assertIsInstance(program[0], hrmulator.Instructions.MoveFromInbox)
         self.assertIsInstance(program[1], hrmulator.Instructions.MoveToOutbox)
         self.assertIsInstance(program[2], hrmulator.Instructions.Jump)
-        self.assertEqual(program[2].destination_pc, 'START')
+        self.assertEqual(program[2].destination_pc, "START")
 
     def test_raises_argument_required(self):
         bad_assembly = """copy_from"""

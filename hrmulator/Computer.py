@@ -32,7 +32,7 @@ class Computer:
         asm = Assembler()
         if program_text is not None:
             self.program, self.jump_table = asm.assemble_program_text(program_text)
-            self.program_path = 'inline'
+            self.program_path = "inline"
         elif program_path is not None:
             self.program, self.jump_table = asm.assemble_program_file(program_path)
             self.program_path = program_path
@@ -48,19 +48,18 @@ class Computer:
         """
 
         # `step_number` here comes from `print_program` so it's off-by-one for the user
-        print("   {}{}{:03d}:{} {}".format(
-            '@' if step_number-1 == self.program_counter else ' ',
-            colorama.Style.DIM,
-            step_number,
-            colorama.Style.RESET_ALL,
-            instruction.colored_str()))
+        print(
+            "   {}{}{:03d}:{} {}".format(
+                "@" if step_number - 1 == self.program_counter else " ",
+                colorama.Style.DIM,
+                step_number,
+                colorama.Style.RESET_ALL,
+                instruction.colored_str(),
+            )
+        )
 
     def _print_label(self, step_number, label):
-        print('{}{}{}:'.format(
-            colorama.Fore.GREEN,
-            label,
-            colorama.Style.RESET_ALL
-        ))
+        print("{}{}{}:".format(colorama.Fore.GREEN, label, colorama.Style.RESET_ALL))
 
     def print_program(self, slice_to_print=None):
         # invert the jump table, so I can see where to print the labels
@@ -68,7 +67,7 @@ class Computer:
         for label in self.jump_table:
             # we print instruction indices off by one, and lookup the label with the off-by-one
             # index, so make sure the label is off by one to match
-            labels[self.jump_table[label]+1].append(label)
+            labels[self.jump_table[label] + 1].append(label)
 
         # If you want to print just a single line of the program, provide
         # a slice of size 1.
@@ -80,7 +79,7 @@ class Computer:
             offset = 0
 
         # now step through the actual program: at each step...
-        for i, instruction in enumerate(program_chunk, offset+1):
+        for i, instruction in enumerate(program_chunk, offset + 1):
             # print any labels that lead to this step;
             if i in labels:
                 for label in labels[i]:
@@ -100,7 +99,9 @@ class Computer:
             pass
         self.program_counter = None
 
-    def print_run_program(self, *, program_path=None, program_text=None, inbox=None, memory=None):
+    def print_run_program(
+        self, *, program_path=None, program_text=None, inbox=None, memory=None
+    ):
         if program_path is not None or program_text is not None:
             self.load_program(program_path=program_path, program_text=program_text)
         if inbox is not None:
@@ -124,7 +125,8 @@ class Computer:
         print("Outbox:")
         print(self.outbox)
         print()
-        print("Program size: {}; Total steps executed: {}".format(
-            len(self.program),
-            self.total_steps_executed
-        ))
+        print(
+            "Program size: {}; Total steps executed: {}".format(
+                len(self.program), self.total_steps_executed
+            )
+        )
