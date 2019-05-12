@@ -2,7 +2,7 @@ import unittest
 import doctest
 
 
-def load_tests():
+def load_all_tests():
     suite = unittest.TestSuite()
     suite.addTest(doctest.DocTestSuite('hrmulator.Memory'))
     suite.addTest(doctest.DocTestSuite('hrmulator.TypeTools'))
