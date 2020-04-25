@@ -7,7 +7,7 @@ import colorama
 
 from .Computer import Computer
 from .Instructions import InboxIsEmptyError, Jump
-from .Utilities import is_char
+from .TypeTools import is_char
 
 
 class Debugger(Computer):

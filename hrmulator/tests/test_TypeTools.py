@@ -1,9 +1,9 @@
 from unittest import TestCase
 
-from hrmulator.Utilities import *
+from hrmulator.TypeTools import *
 
 
-class TestUtilities(TestCase):
+class TestTypeTools(TestCase):
 
     def test_is_char(self):
         self.assertTrue(is_char('A'))

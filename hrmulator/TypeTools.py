@@ -1,7 +1,7 @@
 """
 Utility routines used in more than one spot.
 
-`is_char` is used my Memory, Instructions, and Debugger to test for
+`is_char` is used by Memory, Instructions, and Debugger to test for
 incompatible types.
 
     >>> is_char(42)

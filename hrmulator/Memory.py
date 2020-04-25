@@ -74,7 +74,7 @@ from collections import defaultdict, OrderedDict
 
 import termcolor
 
-from .Utilities import is_char, is_int_or_char, int_if_possible
+from .TypeTools import is_char, is_int_or_char, int_if_possible
 
 
 class MemoryError(Exception):
