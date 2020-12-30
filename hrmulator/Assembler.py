@@ -10,7 +10,7 @@ class AssemblerError(Exception):
         self.text = text
 
     def __str__(self):
-        return '{}, line {}: "{}"'.format(self.description, self.line_number, self.text)
+        return f'{self.description}, line {self.line_number}: "{self.text}"'
 
 
 class ArgumentRequiredError(AssemblerError):
@@ -43,15 +43,15 @@ class Assembler:
     program itself, and the jump table referring into it.
     """
 
-    comment_re = re.compile("(.*)#.*")
+    comment_re = re.compile(r"(.*)#.*")
     # keep anything to the left of the comment marker
 
-    label_re = re.compile("(\w+):")
-    instruction_with_arg_re = re.compile("(\w+)\s+(\w+)$")
-    indirect_tile_instruction_re = re.compile("(\w+)\s+\[(\w+)\]$")
+    label_re = re.compile(r"(\w+):")
+    instruction_with_arg_re = re.compile(r"(\w+)\s+(\w+)$")
+    indirect_tile_instruction_re = re.compile(r"(\w+)\s+\[(\w+)\]$")
     # Note tile index is made of word characters not necessarily digits.
 
-    instruction_re = re.compile("(\w+)$")
+    instruction_re = re.compile(r"(\w+)$")
 
     def __init__(self):
         """
@@ -71,6 +71,18 @@ class Assembler:
         lines = text.split("\n")
         return self._assemble_program(lines)
 
+    def _strip_off_the_comment_if_any(self, line):
+        match = re.match(self.comment_re, line)
+        if match is not None:
+            line = match.group(1)
+        return line
+
+    def _save_labels_in_the_jump_table(self, line, step, jump_table):
+        match = re.match(self.label_re, line)
+        if match is not None:
+            jump_table[match.group(1)] = step
+            return True
+
     def _assemble_program(self, lines):
         """Read the source line-by-line and translate it into instructions."""
         program = []
@@ -87,25 +99,16 @@ class Assembler:
         # case, I know.
 
         step = 0
-        line_number = 0 # ...for error reporting; 1-based like your editor.
+        line_number = 0  # ...for error reporting; 1-based like your editor.
         for line in lines:
             line_number += 1
 
-            # strip off the comment, if any
-            match = re.match(self.comment_re, line)
-            if match is not None:
-                line = match.group(1)
-
-            # strip off the whitespace, if any
+            line = self._strip_off_the_comment_if_any(line)
             line = line.strip()
-            # throw away blank lines
             if not line:
                 continue
 
-            # if it's a label, save it in the jump_table
-            match = re.match(self.label_re, line)
-            if match is not None:
-                jump_table[match.group(1)] = step
+            if self._save_labels_in_the_jump_table(line, step, jump_table):
                 continue
 
             match = None
@@ -141,10 +144,8 @@ class Assembler:
                     # Can't just say class_(arg, indirect=indirect) because it
                     # might be one of the jump instructions.  They don't take
                     # the indirect keyword
-                    if indirect:
-                        instruction = class_(arg, indirect=True)
-                    else:
-                        instruction = class_(arg)
+                    instruction = class_(arg, indirect=True) if indirect else class_(arg)
+
                 elif arg is not None:
                     raise UnexpectedArgumentError(line_number, arg)
                 else:

@@ -12,8 +12,8 @@ from .TypeTools import is_char
 
 class Debugger(Computer):
 
-    command_with_argument_re = re.compile("^[a-z]\s*(\w+)$")
-    execute_command_re = re.compile("^x\s+(.*)$")
+    command_with_argument_re = re.compile(r"^[a-z]\s*(\w+)$")
+    execute_command_re = re.compile(r"^x\s+(.*)$")
 
     def __init__(self):
         super().__init__()
@@ -42,9 +42,7 @@ class Debugger(Computer):
         print(
             "  {}{}{}{:03d}{}: {}".format(
                 "!" if is_breakpoint else " ",
-                "@"
-                if step_number - 1 == self.program_counter
-                else " ",  # avoid doing math on None
+                "@" if step_number - 1 == self.program_counter else " ",  # avoid doing math on None
                 colorama.Fore.RED if is_breakpoint else colorama.Style.DIM,
                 step_number,
                 colorama.Style.RESET_ALL,
@@ -54,7 +52,7 @@ class Debugger(Computer):
 
     def _print_label(self, step_number, label):
         if step_number - 1 in self.breakpoints:
-            print("{}{}{}:".format(colorama.Fore.RED, label, colorama.Style.RESET_ALL))
+            print("{colorama.Fore.RED}{label}{colorama.Style.RESET_ALL}:")
         else:
             super()._print_label(step_number, label)
 
@@ -64,9 +62,7 @@ class Debugger(Computer):
         while True:
             if ok_to_print_one_line:
                 print()
-                self.print_program(
-                    slice(self.program_counter, self.program_counter + 1)
-                )
+                self.print_program(slice(self.program_counter, self.program_counter + 1))
             ok_to_print_one_line = True
 
             command = input("\ndebug> ")
@@ -77,7 +73,7 @@ class Debugger(Computer):
                 #
                 print("\naccumulator: ", end="")
                 if is_char(self.accumulator):
-                    print("'{}'".format(self.accumulator))
+                    print("'{self.accumulator}'")
                 else:
                     print(self.accumulator)
             elif command.startswith("b"):
@@ -135,9 +131,7 @@ class Debugger(Computer):
                 if match is None:
                     slice_to_print = None
                 else:
-                    slice_to_print = slice(
-                        self.program_counter, self.program_counter + int(match.group(1))
-                    )
+                    slice_to_print = slice(self.program_counter, self.program_counter + int(match.group(1)))
                 print()
                 self.print_program(slice_to_print)
                 ok_to_print_one_line = False
@@ -224,9 +218,7 @@ Commands:
         escape = False
         try:
             while self.program_counter < len(self.program) and not escape:
-                if self.program_counter in self.breakpoints.union(
-                    self.temporary_breakpoints
-                ):
+                if self.program_counter in self.breakpoints.union(self.temporary_breakpoints):
                     self.temporary_breakpoints = set()
                     escape = self._menu()
                 self.program[self.program_counter].execute(self)
@@ -239,9 +231,7 @@ Commands:
         self.program_counter = None
         readline.write_history_file(self.history_file)
 
-    def print_run_program(
-        self, *, program_path=None, program_text=None, inbox=None, memory=None
-    ):
+    def print_run_program(self, *, program_path=None, program_text=None, inbox=None, memory=None):
         self.program_counter = 0
         super().print_run_program(
             program_path=program_path,

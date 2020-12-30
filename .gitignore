@@ -10,4 +10,6 @@
 __pycache__/
 tags
 
-/venv/
+*.venv/
+venv/
+.ropeproject/

@@ -134,9 +134,7 @@ class CopyFrom(AbstractTileInstruction):
     symbol = "copy_from"
 
     def execute(self, computer):
-        computer.accumulator = computer.memory.get(
-            self.tile_index, indirect=self.indirect
-        )
+        computer.accumulator = computer.memory.get(self.tile_index, indirect=self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -146,9 +144,7 @@ class CopyTo(AbstractTileInstruction):
 
     def execute(self, computer):
         self._assertAccumulatorIsNotEmpty(computer)
-        computer.memory.set(
-            self.tile_index, computer.accumulator, indirect=self.indirect
-        )
+        computer.memory.set(self.tile_index, computer.accumulator, indirect=self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
 
@@ -160,9 +156,7 @@ class Add(AbstractTileInstruction):
         self._assertAccumulatorIsNotEmpty(computer)
         value_to_add = computer.memory.get(self.tile_index, indirect=self.indirect)
         if is_char(value_to_add) or is_char(computer.accumulator):
-            raise IncompatibleTypesError(
-                "You can't add a letter.  What would that even mean?"
-            )
+            raise IncompatibleTypesError("You can't add a letter.  What would that even mean?")
         computer.accumulator += value_to_add
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -176,9 +170,7 @@ class Subtract(AbstractTileInstruction):
         value_to_subtract = computer.memory.get(self.tile_index, indirect=self.indirect)
         value_to_subtract_is_char = is_char(value_to_subtract)
         if value_to_subtract_is_char != is_char(computer.accumulator):
-            raise IncompatibleTypesError(
-                "You can't subtract (from) a letter.  What would that even mean?"
-            )
+            raise IncompatibleTypesError("You can't subtract (from) a letter.  What would that even mean?")
         if value_to_subtract_is_char:
             value_to_subtract = ord(value_to_subtract)
             computer.accumulator = ord(computer.accumulator)
@@ -198,9 +190,7 @@ class BumpUp(AbstractTileInstruction):
     def execute(self, computer):
         value = computer.memory.get(self.tile_index, indirect=self.indirect)
         if is_char(value):
-            raise IncompatibleTypesError(
-                "You can't add to a letter.  What would that even mean?"
-            )
+            raise IncompatibleTypesError("You can't add to a letter.  What would that even mean?")
         value += 1
         computer.memory.set(self.tile_index, value, indirect=self.indirect)
         computer.accumulator = value
@@ -219,9 +209,7 @@ class BumpDown(AbstractTileInstruction):
     def execute(self, computer):
         value = computer.memory.get(self.tile_index, indirect=self.indirect)
         if is_char(value):
-            raise IncompatibleTypesError(
-                "You can't subtract from a letter.  What would that even mean?"
-            )
+            raise IncompatibleTypesError("You can't subtract from a letter.  What would that even mean?")
         value -= 1
         computer.memory.set(self.tile_index, value, indirect=self.indirect)
         computer.accumulator = value
@@ -237,7 +225,7 @@ class Jump(AbstractInstruction):
 
     def __str__(self):
         try:
-            result = "{} {:03d}".format(self.symbol, self.destination_pc)
+            result = "{self.symbol} {self.destination_pc:03d}"
         except ValueError:
             result = "{} {}{}{}".format(
                 self.symbol,
@@ -255,13 +243,11 @@ class Jump(AbstractInstruction):
         if result in computer.jump_table:
             result = computer.jump_table[result]
         if type(result) is not int:
-            raise NoSuchJumpDestinationError(
-                result, 'The label "{}" does not appear in the program.'.format(result)
-            )
+            raise NoSuchJumpDestinationError(result, f'The label "{result}" does not appear in the program.')
         elif not 0 <= result < len(computer.program):
             raise NoSuchJumpDestinationError(
                 result,
-                "Step number {} is outside the range of the program.".format(result),
+                f"Step number {result} is outside the range of the program."
             )
         return result
 

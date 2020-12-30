@@ -35,9 +35,7 @@ OUTPUT:
 class TestIntegration000(TestCase):
     def test_multiplication_workshop(self):
         computer = Computer()
-        computer.memory = Memory(
-            labels={"A": 0, "B": 1, "product": 2, "zero": 9}, values={"zero": 0}
-        )
+        computer.memory = Memory(labels={"A": 0, "B": 1, "product": 2, "zero": 9}, values={"zero": 0})
         computer.set_inbox([3, 2, 0, 7])
         computer.load_program(program_text=program_text)
         computer.run()

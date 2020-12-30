@@ -6,7 +6,6 @@ the trouble we go to is in printing everything (and using a little color).
 from collections import defaultdict, deque
 
 import colorama
-import termcolor
 
 from .Assembler import Assembler
 from .Memory import Memory
@@ -59,7 +58,7 @@ class Computer:
         )
 
     def _print_label(self, step_number, label):
-        print("{}{}{}:".format(colorama.Fore.GREEN, label, colorama.Style.RESET_ALL))
+        print(f"{colorama.Fore.GREEN}{label}{colorama.Style.RESET_ALL}:")
 
     def print_program(self, slice_to_print=None):
         # invert the jump table, so I can see where to print the labels
@@ -99,9 +98,7 @@ class Computer:
             pass
         self.program_counter = None
 
-    def print_run_program(
-        self, *, program_path=None, program_text=None, inbox=None, memory=None
-    ):
+    def print_run_program(self, *, program_path=None, program_text=None, inbox=None, memory=None):
         if program_path is not None or program_text is not None:
             self.load_program(program_path=program_path, program_text=program_text)
         if inbox is not None:
@@ -125,8 +122,4 @@ class Computer:
         print("Outbox:")
         print(self.outbox)
         print()
-        print(
-            "Program size: {}; Total steps executed: {}".format(
-                len(self.program), self.total_steps_executed
-            )
-        )
+        print("Program size: {len(self.program)}; Total steps executed: {self.total_steps_executed}")

@@ -92,9 +92,7 @@ class CantIndirectThroughLetter(MemoryError):
 
 class CantStoreBadType(MemoryError):
     def __init__(self):
-        super().__init__(
-            "A memory tile may only hold an integer or a single character."
-        )
+        super().__init__("A memory tile may only hold an integer or a single character.")
 
 
 class Memory:
@@ -140,9 +138,7 @@ class Memory:
         key = int_if_possible(key)  # don't be fooled, '24' is not a label
         key = self.label_map.get(key, key)
         if type(key) is not int:
-            raise KeyError(
-                key, 'The label "{}" has not been applied to any tile.'.format(key)
-            )
+            raise KeyError(key, f'The label "{key}" has not been applied to any tile.')
         return key
 
     def label_tile(self, key, label):
@@ -153,7 +149,7 @@ class Memory:
         """A convenience method, [] for when access is not indirect."""
         value = self.tiles.get(self._resolve_key(key), None)
         if value is None:
-            raise MemoryTileIsEmptyError(key, "Tile {} is empty.".format(key))
+            raise MemoryTileIsEmptyError(key, "Tile {key} is empty.")
         return value
 
     def get(self, key, *, indirect=False):
@@ -212,7 +208,7 @@ class Memory:
         def print_one(key):
             """Pretty-print a single key, its labels if any, and its value."""
             key = self._resolve_key(key)
-            key_str = termcolor.colored("{:2d}".format(key), "blue")
+            key_str = termcolor.colored("{key:2d}", "blue")
             # print tile keys in color, just like in the program listing
             print(key_str, end="")
 
@@ -231,7 +227,7 @@ class Memory:
                 print(termcolor.colored("empty", "red"))
             else:
                 if is_char(value):
-                    print("'{}'".format(value))
+                    print("'{value}'")
                     # quote it
                 else:
                     print(value)
