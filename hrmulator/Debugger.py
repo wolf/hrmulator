@@ -52,7 +52,7 @@ class Debugger(Computer):
 
     def _print_label(self, step_number, label):
         if step_number - 1 in self.breakpoints:
-            print("{colorama.Fore.RED}{label}{colorama.Style.RESET_ALL}:")
+            print(f"{colorama.Fore.RED}{label}{colorama.Style.RESET_ALL}:")
         else:
             super()._print_label(step_number, label)
 
@@ -73,7 +73,7 @@ class Debugger(Computer):
                 #
                 print("\naccumulator: ", end="")
                 if is_char(self.accumulator):
-                    print("'{self.accumulator}'")
+                    print(f"'{self.accumulator}'")
                 else:
                     print(self.accumulator)
             elif command.startswith("b"):

@@ -122,4 +122,4 @@ class Computer:
         print("Outbox:")
         print(self.outbox)
         print()
-        print("Program size: {len(self.program)}; Total steps executed: {self.total_steps_executed}")
+        print(f"Program size: {len(self.program)}; Total steps executed: {self.total_steps_executed}")

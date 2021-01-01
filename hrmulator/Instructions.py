@@ -225,7 +225,7 @@ class Jump(AbstractInstruction):
 
     def __str__(self):
         try:
-            result = "{self.symbol} {self.destination_pc:03d}"
+            result = f"{self.symbol} {self.destination_pc:03d}"
         except ValueError:
             result = "{} {}{}{}".format(
                 self.symbol,

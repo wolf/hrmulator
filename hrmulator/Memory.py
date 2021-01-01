@@ -149,7 +149,7 @@ class Memory:
         """A convenience method, [] for when access is not indirect."""
         value = self.tiles.get(self._resolve_key(key), None)
         if value is None:
-            raise MemoryTileIsEmptyError(key, "Tile {key} is empty.")
+            raise MemoryTileIsEmptyError(key, f"Tile {key} is empty.")
         return value
 
     def get(self, key, *, indirect=False):
@@ -208,7 +208,7 @@ class Memory:
         def print_one(key):
             """Pretty-print a single key, its labels if any, and its value."""
             key = self._resolve_key(key)
-            key_str = termcolor.colored("{key:2d}", "blue")
+            key_str = termcolor.colored(f"{key:2d}", "blue")
             # print tile keys in color, just like in the program listing
             print(key_str, end="")
 
@@ -227,7 +227,7 @@ class Memory:
                 print(termcolor.colored("empty", "red"))
             else:
                 if is_char(value):
-                    print("'{value}'")
+                    print(f"'{value}'")
                     # quote it
                 else:
                     print(value)
