@@ -13,3 +13,4 @@ tags
 *.venv/
 venv/
 .ropeproject/
+.python-version

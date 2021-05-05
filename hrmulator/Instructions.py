@@ -61,7 +61,7 @@ class AbstractInstruction:
     def colored_str(self):
         return self.__str__()
 
-    def _assertAccumulatorIsNotEmpty(self, computer):
+    def _assert_accumulator_is_not_empty(self, computer):
         if computer.accumulator is None:
             raise AccumulatorIsEmptyError("The accumulator is empty.")
 
@@ -106,7 +106,7 @@ class MoveToOutbox(AbstractInstruction):
     symbol = "move_to_outbox"
 
     def execute(self, computer):
-        self._assertAccumulatorIsNotEmpty(computer)
+        self._assert_accumulator_is_not_empty(computer)
         computer.outbox.append(computer.accumulator)
         computer.accumulator = None
         computer.program_counter += 1
@@ -143,7 +143,7 @@ class CopyTo(AbstractTileInstruction):
     symbol = "copy_to"
 
     def execute(self, computer):
-        self._assertAccumulatorIsNotEmpty(computer)
+        self._assert_accumulator_is_not_empty(computer)
         computer.memory.set(self.tile_index, computer.accumulator, indirect=self.indirect)
         computer.program_counter += 1
         computer.total_steps_executed += 1
@@ -153,7 +153,7 @@ class Add(AbstractTileInstruction):
     symbol = "add"
 
     def execute(self, computer):
-        self._assertAccumulatorIsNotEmpty(computer)
+        self._assert_accumulator_is_not_empty(computer)
         value_to_add = computer.memory.get(self.tile_index, indirect=self.indirect)
         if is_char(value_to_add) or is_char(computer.accumulator):
             raise IncompatibleTypesError("You can't add a letter.  What would that even mean?")
@@ -166,7 +166,7 @@ class Subtract(AbstractTileInstruction):
     symbol = "subtract"
 
     def execute(self, computer):
-        self._assertAccumulatorIsNotEmpty(computer)
+        self._assert_accumulator_is_not_empty(computer)
         value_to_subtract = computer.memory.get(self.tile_index, indirect=self.indirect)
         value_to_subtract_is_char = is_char(value_to_subtract)
         if value_to_subtract_is_char != is_char(computer.accumulator):
@@ -264,7 +264,7 @@ class JumpIfZero(Jump):
     symbol = "jump_if_zero_to"
 
     def execute(self, computer):
-        self._assertAccumulatorIsNotEmpty(computer)
+        self._assert_accumulator_is_not_empty(computer)
         if computer.accumulator == 0:
             computer.program_counter = self._lookup_destination(computer)
         else:
@@ -284,7 +284,7 @@ class JumpIfNegative(Jump):
     symbol = "jump_if_negative_to"
 
     def execute(self, computer):
-        self._assertAccumulatorIsNotEmpty(computer)
+        self._assert_accumulator_is_not_empty(computer)
         if computer.accumulator < 0:
             computer.program_counter = self._lookup_destination(computer)
         else:
