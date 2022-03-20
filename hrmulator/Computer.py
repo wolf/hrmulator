@@ -8,8 +8,8 @@ from collections import defaultdict, deque
 import colorama
 
 from .Assembler import Assembler
-from .Memory import Memory
 from .Instructions import InboxIsEmptyError
+from .Memory import Memory
 
 
 class Computer:

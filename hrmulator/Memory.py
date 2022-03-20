@@ -70,11 +70,11 @@ the game works:
 
 Of course I don't support slices.  The game doesn't use them, so I don't need them.
 """
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 
 import termcolor
 
-from .TypeTools import is_char, is_int_or_char, int_if_possible
+from .TypeTools import int_if_possible, is_char, is_int_or_char
 
 
 class MemoryError(Exception):

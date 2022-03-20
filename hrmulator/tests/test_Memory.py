@@ -1,11 +1,8 @@
 from unittest import TestCase
 
 import hrmulator
-from hrmulator.Memory import (
-    MemoryTileIsEmptyError,
-    CantIndirectThroughLetter,
-    CantStoreBadType,
-)
+from hrmulator.Memory import (CantIndirectThroughLetter, CantStoreBadType,
+                              MemoryTileIsEmptyError)
 
 
 class TestMemory(TestCase):

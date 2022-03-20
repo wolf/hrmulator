@@ -1,5 +1,5 @@
-from collections import OrderedDict
 import re
+from collections import OrderedDict
 
 from .Instructions import INSTRUCTION_CATALOG
 

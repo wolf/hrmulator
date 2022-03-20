@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from hrmulator import Computer, Memory
 
-
 program_text = """
 START:
     move_from_inbox

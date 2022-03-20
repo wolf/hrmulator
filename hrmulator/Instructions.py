@@ -24,10 +24,10 @@ work.  `__init__` and `has_argument` cooperate to collect the argument in the
 assembler.  The `__str__` function does the job of building a printable and
 machine readable instruction out of `symbol`.
 """
-from .TypeTools import is_char
-
 import colorama
 import termcolor
+
+from .TypeTools import is_char
 
 
 class InstructionError(Exception):

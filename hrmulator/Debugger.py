@@ -1,7 +1,7 @@
-from collections import deque
 import os
-import readline
 import re
+import readline
+from collections import deque
 
 import colorama
 

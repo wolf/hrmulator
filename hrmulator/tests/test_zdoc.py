@@ -1,5 +1,5 @@
-import unittest
 import doctest
+import unittest
 
 
 def load_all_tests():
