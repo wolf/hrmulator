@@ -245,10 +245,7 @@ class Jump(AbstractInstruction):
         if type(result) is not int:
             raise NoSuchJumpDestinationError(result, f'The label "{result}" does not appear in the program.')
         elif not 0 <= result < len(computer.program):
-            raise NoSuchJumpDestinationError(
-                result,
-                f"Step number {result} is outside the range of the program."
-            )
+            raise NoSuchJumpDestinationError(result, f"Step number {result} is outside the range of the program.")
         return result
 
     def execute(self, computer):

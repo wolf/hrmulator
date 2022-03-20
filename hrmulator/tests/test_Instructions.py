@@ -3,8 +3,7 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 import hrmulator
-from hrmulator.Memory import (CantIndirectThroughLetter, Memory,
-                              MemoryTileIsEmptyError)
+from hrmulator.Memory import CantIndirectThroughLetter, Memory, MemoryTileIsEmptyError
 
 
 class TestInstructions(TestCase):
