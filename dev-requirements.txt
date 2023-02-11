@@ -4,8 +4,6 @@
 #
 #    pip-compile dev-requirements.in
 #
-appnope==0.1.2
-    # via ipython
 asttokens==2.0.5
     # via stack-data
 attrs==21.4.0
@@ -24,7 +22,7 @@ executing==0.8.3
     # via stack-data
 iniconfig==1.1.1
     # via pytest
-ipython==8.1.1
+ipython==8.10.0
     # via -r dev-requirements.in
 jedi==0.18.1
     # via ipython
@@ -44,7 +42,7 @@ pickleshare==0.7.5
     # via ipython
 pluggy==1.0.0
     # via pytest
-prompt-toolkit==3.0.28
+prompt-toolkit==3.0.36
     # via ipython
 ptyprocess==0.7.0
     # via pexpect
@@ -77,6 +75,3 @@ traitlets==5.1.1
     #   matplotlib-inline
 wcwidth==0.2.5
     # via prompt-toolkit
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools
