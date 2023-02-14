@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from hrmulator.TypeTools import *
+from hrmulator.TypeTools import is_char, is_int_or_char, int_if_possible
 
 
 class TestTypeTools(TestCase):

@@ -1,7 +1,11 @@
 from unittest import TestCase
 
 import hrmulator
-from hrmulator.Memory import CantIndirectThroughLetter, CantStoreBadType, MemoryTileIsEmptyError
+from hrmulator.Memory import (
+    CantIndirectThroughLetter,
+    CantStoreBadType,
+    MemoryTileIsEmptyError,
+)
 
 
 class TestMemory(TestCase):
@@ -10,19 +14,19 @@ class TestMemory(TestCase):
 
     def test_memory_empty_lookup(self):
         with self.assertRaises(MemoryTileIsEmptyError):
-            value = self.memory[0]
+            _value = self.memory[0]
 
     def test_memory_empty_lookup_get(self):
         with self.assertRaises(MemoryTileIsEmptyError):
-            value = self.memory.get(0)
+            _value = self.memory.get(0)
 
     def test_memory_unknown_label(self):
         with self.assertRaises(KeyError):
-            value = self.memory["hello"]
+            _value = self.memory["hello"]
 
     def test_memory_unknown_label_get(self):
         with self.assertRaises(KeyError):
-            value = self.memory.get("hello")
+            _value = self.memory.get("hello")
 
     def test_memory_set_and_get(self):
         self.memory[0] = 74
@@ -35,7 +39,7 @@ class TestMemory(TestCase):
     def test_memory_apply_label(self):
         self.memory.label_tile(0, "hello")
         with self.assertRaises(MemoryTileIsEmptyError):
-            value = self.memory["hello"]
+            _value = self.memory["hello"]
 
     def test_memory_label_is_connected(self):
         self.memory.label_tile(0, "hello")
@@ -74,7 +78,7 @@ class TestMemory(TestCase):
         self.memory[0] = 74
         # self.memory[74] = None
         with self.assertRaises(MemoryTileIsEmptyError):
-            value = self.memory.get(0, indirect=True)
+            _value = self.memory.get(0, indirect=True)
 
     def test_memory_get_indirect(self):
         self.memory[0] = 74
@@ -84,18 +88,18 @@ class TestMemory(TestCase):
 
     def test_memory_set_indirect(self):
         self.memory[0] = 74
-        value = self.memory.set(0, "A", indirect=True)
+        _value = self.memory.set(0, "A", indirect=True)
         self.assertEqual(self.memory[74], "A")
 
     def test_memory_get_indirect_through_letter(self):
         self.memory[0] = "A"
         with self.assertRaises(CantIndirectThroughLetter):
-            value = self.memory.get(0, indirect=True)
+            _value = self.memory.get(0, indirect=True)
 
     def test_memory_set_indirect_through_letter(self):
         self.memory[0] = "A"
         with self.assertRaises(CantIndirectThroughLetter):
-            value = self.memory.set(0, "A", indirect=True)
+            _value = self.memory.set(0, "A", indirect=True)
 
     def test_memory_set_bad_type(self):
         with self.assertRaises(CantStoreBadType):
